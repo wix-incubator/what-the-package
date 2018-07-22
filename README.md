@@ -1,5 +1,9 @@
 # What The Dep!?
 
+### known issues
+
+* we ignore release tags, only semver
+
 ### High level flow
 
 Given a `package.json` and a `targetDate`:
