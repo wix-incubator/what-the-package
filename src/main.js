@@ -18,9 +18,17 @@ const getReleaseTimes = packageName => {
   return semverOnly
 }
 
+// date -> semver -> releaseTimes -> version
+const resolveDependencyVersion = (datetime, semver, releaseTimes) => {
+  const validDates = _.pickBy(releaseTimes, (timeStr, version) => {
+
+  })
+}
+
 module.exports = {
   getDepsFromPackageJson,
-  getReleaseTimes
+  getReleaseTimes,
+  resolveDependencyVersion
 }
 
 
