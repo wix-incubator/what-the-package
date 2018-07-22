@@ -1,5 +1,16 @@
 # What The Dep!?
 
+### High level flow
+
+Given a `package.json` and a `targetDate`:
+
+1. get dependencies from `package.json`
+1. for each dep, get output of `npm view`
+1. for each output of `npm view`, return the latest release which conforms to:
+  * `package.json`'s version rule
+  * release date is before `targetDate`
+  * error if result is empty
+
 
 ###  Prettier example
 
