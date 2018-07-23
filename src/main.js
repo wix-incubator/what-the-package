@@ -1,6 +1,8 @@
 const _ = require("lodash")
 const { execSync } = require('child_process') 
 const fs = require("fs")
+const dayjs = require("dayjs")
+const semver = require("semver")
 
 const getDepsFromPackageJson = path => {
   const pj = fs.readFileSync(path, "utf8")
@@ -19,16 +21,23 @@ const getReleaseTimes = packageName => {
 }
 
 // date -> semver -> releaseTimes -> version
-const resolveDependencyVersion = (datetime, semver, releaseTimes) => {
-  const validDates = _.pickBy(releaseTimes, (timeStr, version) => {
+const resolveDependencyVersion = (timestamp, semverRule, releaseTimes) => {
+  const doesMatchSemverRule = version => semver.satisfies(version, semverRule)
+  const isBeforeTimestamp = releaseTime => dayjs(releaseTime).isBefore(dayjs(timestamp))
 
-  })
+  const validVersions = _(releaseTimes)
+    .map((releaseTime, version) => ({ version, releaseTime }))
+    .filter(({releaseTime, version}) => doesMatchSemverRule(version) && isBeforeTimestamp(releaseTime))
+    .value()
+  const latestValidVersion = _.maxBy(validVersions, ({releaseTime}) => dayjs(releaseTime).valueOf())
+
+  return latestValidVersion && latestValidVersion.version
 }
 
 module.exports = {
   getDepsFromPackageJson,
   getReleaseTimes,
-  resolveDependencyVersion
+  resolveDependencyVersion,
 }
 
 
