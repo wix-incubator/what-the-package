@@ -34,10 +34,14 @@ const resolveDependencyVersion = (timestamp, semverRule, releaseTimes) => {
   return latestValidVersion && latestValidVersion.version
 }
 
+const getVersionsAtTimestamp = (deps, timestamp) => _.mapValues(deps, (semverRule, packageName) => {
+  const packageReleaseTimes = getReleaseTimes(packageName)
+  return resolveDependencyVersion(timestamp, semverRule, packageReleaseTimes)
+})
+
 module.exports = {
   getDepsFromPackageJson,
   getReleaseTimes,
   resolveDependencyVersion,
+  getVersionsAtTimestamp,
 }
-
-

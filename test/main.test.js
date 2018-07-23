@@ -1,13 +1,16 @@
+const _ = require("lodash")
 const path = require("path")
 const {
   getDepsFromPackageJson,
   getReleaseTimes,
   resolveDependencyVersion,
+  getVersionsAtTimestamp,
 } = require("../src/main")
 const detoxReleaseTimes = require("../data/detox-release-times.json")
 
+const pathToJson = path.resolve(__dirname, "../data/detox.package.json")
+
 test("should get dependencies from the test package.json", () => {
-  const pathToJson = path.resolve(__dirname, "../data/detox.package.json")
   const deps = getDepsFromPackageJson(pathToJson)
 
   expect(deps).toEqual({
@@ -48,3 +51,15 @@ test("should resolve the dependency's version", () => {
 
   expect(version).toEqual("5.0.9");
 });
+
+test("should resolve all dependencies' versions from package.json for a given timestamp", () => {
+  const timestamp = '2018-07-01'
+  const deps = _.pick(getDepsFromPackageJson(pathToJson), ["eslint", "eslint-plugin-node"])
+
+  const versionsAtTimestamp = getVersionsAtTimestamp(deps, timestamp)
+
+  expect(versionsAtTimestamp).toEqual({
+    "eslint": "4.19.1",
+    "eslint-plugin-node": "6.0.1",
+  })
+})
