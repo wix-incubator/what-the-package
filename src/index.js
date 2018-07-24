@@ -6,7 +6,9 @@ const dayjs = require("dayjs")
 const semver = require("semver")
 
 const {
-
+  getRegistryInfoField,
+  semverToExactVersion,
+  getExactDependencyVersionsAt,
 } = require("./utils")
 
 /*::
@@ -32,34 +34,6 @@ const findNpmModuleDependenciesDiff = (
 
   return {}
 }
-
-const getDependenciesAt = (
-  npmModuleName /*: NpmModuleName */,
-  timestamp /*: TimestampMs */, 
-) /*: { [NpmModuleName]: Version } */ => {
-  
-  // semvers <- get deps, devDeps
-  // 
-  // exact deps <- semvers.map(semverToExactVersion? ... )
-
-  return {}
-}
-
-const semverToExactVersion = (
-  npmModuleName /*: NpmModuleName */,
-  timestamp /*: TimestampMs */, 
-  semver /*: Semver */
-) /*: ?Version */ => {
-
-  // get releaseTimes
-  // filter by timestamp
-  // filter by semver
-  // return last (chronologically)
-}
-
-
-
-
 
 const getReleaseTimes = (packageName /*: string*/) => {
   const semverRegex = /^\d+\.\d+\.\d+$/

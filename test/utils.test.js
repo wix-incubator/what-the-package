@@ -1,18 +1,19 @@
 const {
   getRegistryInfoField,
-  semverToExactVersion
+  semverToExactVersion,
+  getExactDependencyVersionsAt
 } = require("../src/utils")
-
-const NON_EXISTING_PACKAGE_NAME = "if_this_packages_exists_then_our_build_deserves_to_break_111111oneoneone"
-
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
-const { 
-  dependencies: DETOX_DEPENDENCIES, 
-  devDependencies: DETOX_DEV_DEPENDENCIES, 
+
+const {
+  dependencies: DETOX_DEPENDENCIES,
+  devDependencies: DETOX_DEV_DEPENDENCIES,
   name: DETOX_NAME,
   time: DETOX_TIME,
   version: DETOX_VERSION
 } = detoxRegistryInfo
+
+const NON_EXISTING_PACKAGE_NAME = "if_this_packages_exists_then_our_build_deserves_to_break_111111oneoneone"
 
 describe("getRegistryInfoField", () => {
   test("should return correct dependencies", () => {
@@ -109,5 +110,25 @@ describe("semverToExactVersion", () => {
 
     const version = semverToExactVersion(npmModuleName, timestamp, semver)
     expect(version).toEqual(null)
+  })
+})
+
+describe("getExactDependencyVersionsAt", () => {
+  test("should return", () => {
+    const npmModuleName = `${DETOX_NAME}@2.0.0`
+    const timestamp = (new Date(DETOX_TIME["2.0.0"])).valueOf() + 1
+    console.log({timestamp})
+
+    const result = getExactDependencyVersionsAt(npmModuleName, timestamp)
+    expect(result).toEqual({
+      "babel-cli": "6.10.1",
+      "babel-core": "6.9.1",
+      "babel-eslint": "6.0.4",
+      "babel-polyfill": "6.9.1",
+      "babel-preset-es2015": "6.9.0",
+      "babel-preset-react": "6.5.0",
+      "babel-preset-stage-0": "6.5.0",
+      "babel-register": "6.9.0",
+    })
   })
 })
