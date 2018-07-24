@@ -2,7 +2,7 @@ const {
   getRegistryInfoField
 } = require("../src/utils")
 
-const detoxRegistryInfo = require("../data/npm-view-detox-output.json")
+const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 const { 
   dependencies: DETOX_DEPENDENCIES, 
   devDependencies: DETOX_DEV_DEPENDENCIES, 
