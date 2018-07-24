@@ -10,7 +10,42 @@ const detoxReleaseTimes = require("../data/detox-release-times.json")
 
 const pathToJson = path.resolve(__dirname, "../data/detox.package.json")
 
-test("should get dependencies from the test package.json", () => {
+
+const { findNpmModuleDependenciesDiff } = require("../src")
+
+/* 
+findNpmModuleDependenciesDiff
+  :: npmModuleName 
+  -> priorTimestamp 
+  -> latterTimestamp
+  -> { 
+      [npmModuleName]: {
+        priorVersion,
+        latterVersion
+      } 
+    }
+*/
+describe("findNpmModuleDependenciesDiff", () => {
+  test.skip("should calculate dependecy diff for detox module", () => {
+    const npmModuleName = "detox"
+    // version 7.0.0 release on "2018-01-26T14:10:36.986Z"
+    const priorTimestamp = (new Date("2018-01-27")).valueOf()
+    // version 8.0.0 release on "2018-06-27T14:47:43.791Z"
+    const latterTimestamp = (new Date("2018-06-28")).valueOf()
+
+    const depDiff = findNpmModuleDependenciesDiff(
+      npmModuleName,
+      priorTimestamp,
+      latterTimestamp
+    )
+
+    expect(depDiff).toEqual(false)
+  })
+})
+
+
+
+test.skip("should get dependencies from the test package.json", () => {
   const deps = getDepsFromPackageJson(pathToJson)
 
   expect(deps).toEqual({
@@ -37,14 +72,14 @@ test("should get dependencies from the test package.json", () => {
   }) 
 })
 
-test("should get a package's list of releases", () => {
+test.skip("should get a package's list of releases", () => {
   const packageName = "detox"
   const releaseTimes = getReleaseTimes(packageName)
 
   expect(releaseTimes).toEqual(detoxReleaseTimes);
 })
 
-test("should resolve the dependency's version", () => {
+test.skip("should resolve the dependency's version", () => {
   const datetime = "2017-05-25"
   const semver = "5.x"
   const version = resolveDependencyVersion(datetime, semver, detoxReleaseTimes)
@@ -52,7 +87,7 @@ test("should resolve the dependency's version", () => {
   expect(version).toEqual("5.0.9");
 });
 
-test("should resolve all dependencies' versions from package.json for a given timestamp", () => {
+test.skip("should resolve all dependencies' versions from package.json for a given timestamp", () => {
   const timestamp = '2018-07-01'
   const deps = _.pick(getDepsFromPackageJson(pathToJson), ["eslint", "eslint-plugin-node"])
 
