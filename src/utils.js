@@ -66,7 +66,7 @@ const getExactVersion = (
 const getExactDependencyVersionsAt = (
   npmModuleName /*: NpmModuleName */,
   timestamp /*: TimestampMs */,
-) /*: { [NpmModuleName]: Version | null } */ => {
+) /*: { [NpmModuleName]: Version } | null */ => {
 
   const version = getExactVersion(npmModuleName, timestamp, 'x')
   if (version === null) {
@@ -74,7 +74,6 @@ const getExactDependencyVersionsAt = (
   }
 
   const dependencySemvers = getRegistryInfoField(`${npmModuleName}@${version}`, 'dependencies')
-  console.log({npmModuleWithVersion: `${npmModuleName}@${version}`, dependencySemvers})
   const devDependencySemvers = getRegistryInfoField(`${npmModuleName}@${version}`, 'devDependencies')
 
   const allDependencySemvers = {
@@ -87,8 +86,30 @@ const getExactDependencyVersionsAt = (
   return exactDependencyVersions
 }
 
+const getVersionsComparison = (
+  priorVersions /*: { [NpmModuleName]: Version }  */,
+  latterVersions /*: { [NpmModuleName]: Version }  */
+)/*: { [NpmModuleName]: VersionDiff } */ => {
+
+  const priorKeys = Object.keys(priorVersions)
+  const latterKeys = Object.keys(latterVersions)
+  const keys = _.union(priorKeys, latterKeys)
+  const pairs = keys.map(moduleName => {
+    return [
+      moduleName,
+      {
+        priorVersion: priorVersions[moduleName] || null,
+        latterVersion: latterVersions[moduleName] || null,
+      }
+    ]
+  })
+
+  return _.fromPairs(pairs)
+}
+
 module.exports = {
   getRegistryInfoField,
   getExactVersion,
   getExactDependencyVersionsAt,
+  getVersionsComparison,
 }
