@@ -1,6 +1,9 @@
 // @flow
 const _ = require("lodash")
-const {getExactDependencyVersionsAt} = require("./utils")
+const {
+  getExactDependencyVersionsAt,
+  getVersionsComparison,
+} = require("./utils")
 
 /*::
 import type {
@@ -13,17 +16,20 @@ import type {
 } from "./utils"
 */
 
-const findNpmModuleDependenciesDiff = (
+const compareNpmModuleDependencies = (
   npmModuleName /*: NpmModuleName */,
   priorTimestamp /*: TimestampMs */, 
   latterTimestamp /*: TimestampMs */
 ) /*: { [NpmModuleName]: VersionDiff } */ => {
-  
-  // name -> prior -> deps
-  // name -> latter -> deps
-  // diff deps
 
-  return {}
+  if (priorTimestamp >=  latterTimestamp) {
+    throw new Error(`${priorTimestamp} is not prior to ${latterTimestamp}`)
+  }
+  const priorDependencies = getExactDependencyVersionsAt(npmModuleName, priorTimestamp)
+  const latterDependencies = getExactDependencyVersionsAt(npmModuleName, latterTimestamp)
+
+  const result = getVersionsComparison(priorDependencies, latterDependencies)
+  return result
 }
 
 
@@ -31,5 +37,5 @@ const findNpmModuleDependenciesDiff = (
 
 
 module.exports = {
-  findNpmModuleDependenciesDiff,
+  compareNpmModuleDependencies,
 }

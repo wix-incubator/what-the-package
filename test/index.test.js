@@ -12,21 +12,36 @@ const {
 
 
 
-const { findNpmModuleDependenciesDiff } = require("../src")
+const { compareNpmModuleDependencies } = require("../src")
 
-describe("findNpmModuleDependenciesDiff", () => {
+describe("compareNpmModuleDependencies", () => {
   test("should calculate dependecy diff for detox module", () => {
     const npmModuleName = DETOX_NAME
     const priorTimestamp = (new Date(DETOX_TIME["7.0.0"])).valueOf() + 1
     const latterTimestamp = (new Date(DETOX_TIME["8.0.0"])).valueOf() + 1
 
-    const depDiff = findNpmModuleDependenciesDiff(
+    const result = compareNpmModuleDependencies(
       npmModuleName,
       priorTimestamp,
       latterTimestamp
     )
 
-    expect(depDiff).toEqual(false)
+    expect(result).toEqual(false)
   })
+
+  test("should throw if latter is before prior", () => {
+    const npmModuleName = DETOX_NAME
+    const invalidPriorTimestamp = (new Date(DETOX_TIME["8.0.0"])).valueOf()
+    const invalidLatterTimestamp = (new Date(DETOX_TIME["2.0.0"])).valueOf()
+
+    expect(() => compareNpmModuleDependencies(
+      npmModuleName,
+      invalidPriorTimestamp,
+      invalidLatterTimestamp
+    )).toThrow()
+  })
+
+  test("should return null if something went wrong")
+
 })
 
