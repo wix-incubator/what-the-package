@@ -107,9 +107,18 @@ const getVersionsComparison = (
   return _.fromPairs(pairs)
 }
 
+const getVersionsDiff = (priorVersions, latterVersions) => {
+  const versionsComparison = getVersionsComparison(priorVersions, latterVersions)
+  const diff = _.omitBy(versionsComparison, (versionsDiff, packageName) => {
+    return versionsDiff.priorVersion === versionsDiff.latterVersion
+  })
+  return diff
+}
+
 module.exports = {
   getRegistryInfoField,
   getExactVersion,
   getExactDependencyVersionsAt,
   getVersionsComparison,
+  getVersionsDiff,
 }

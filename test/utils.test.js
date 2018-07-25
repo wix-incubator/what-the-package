@@ -3,6 +3,7 @@ const {
   getExactVersion,
   getExactDependencyVersionsAt,
   getVersionsComparison,
+  getVersionsDiff,
 } = require("../src/utils")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
@@ -183,16 +184,12 @@ describe.skip("getVersionsDiff", () => {
       "babel-polyfill": "6.9.1",
     };
 
-    const versionsComparison = getVersionsComparison(priorVersions, latterVersions)
+    const diff = getVersionsDiff(priorVersions, latterVersions)
 
-    expect(versionsComparison).toEqual({
-      "babel-cli": {
-         "latterVersion": "6.10.1",
-        "priorVersion": "6.10.1",
-      },
+    expect(diff).toEqual({
       "babel-core": {
-         "latterVersion": "7.0.0",
-         "priorVersion": "6.9.1",
+        "latterVersion": "7.0.0",
+        "priorVersion": "6.9.1",
       },
       "babel-eslint": {
         "latterVersion": null,
