@@ -1,7 +1,6 @@
 // @flow
 const _ = require("lodash")
 const { execSync } = require("child_process")
-const fs = require("fs")
 const dayjs = require("dayjs")
 const SV = require("semver")
 
