@@ -5,7 +5,7 @@
   "author": "javinor <javinor@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint ./src --fix"
+    "lint": "eslint . --fix"
   },
   "bin": {
     "dep-diff": "./src/cli.js"
@@ -31,6 +31,7 @@
       "es6": true
     }
   },
+  "eslintIgnore": ["flow-typed"],
   "prettier": {
     "semi": false
   }
