@@ -114,10 +114,9 @@ describe("semverToExactVersion", () => {
 })
 
 describe("getExactDependencyVersionsAt", () => {
-  test("should return", () => {
+  test("should return correct result", () => {
     const npmModuleName = `${DETOX_NAME}@2.0.0`
     const timestamp = (new Date(DETOX_TIME["2.0.0"])).valueOf() + 1
-    console.log({timestamp})
 
     const result = getExactDependencyVersionsAt(npmModuleName, timestamp)
     expect(result).toEqual({
