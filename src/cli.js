@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { compareNpmModuleDependencies } = require("./index")
+const { compareNpmModuleDependencies } = require("./utils")
 
 const [, , ...args] = process.argv
 const [npmModuleName, priorDate, latterDate] = args

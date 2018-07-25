@@ -1,7 +1,8 @@
 const {
-  getRegistryInfoField,
-  getExactVersion,
+  compareNpmModuleDependencies,
   getExactDependencyVersionsAt,
+  getExactVersion,
+  getRegistryInfoField,
   getVersionsComparison,
   getVersionsDiff,
 } = require("../src/utils")
@@ -201,4 +202,47 @@ describe.skip("getVersionsDiff", () => {
       },
     })
   })
+})
+
+describe("compareNpmModuleDependencies", () => {
+  test("should calculate dependecy diff for detox module", () => {
+    const npmModuleName = DETOX_NAME
+    const priorTimestamp = (new Date(DETOX_TIME["7.0.0"])).valueOf() + 1
+    const latterTimestamp = (new Date(DETOX_TIME["8.0.0"])).valueOf() + 1
+
+    const result = compareNpmModuleDependencies(
+      npmModuleName,
+      priorTimestamp,
+      latterTimestamp
+    )
+
+    expect(result).toEqual(false)
+  })
+
+  test("should throw if latter is before prior", () => {
+    const npmModuleName = DETOX_NAME
+    const invalidPriorTimestamp = (new Date(DETOX_TIME["8.0.0"])).valueOf()
+    const invalidLatterTimestamp = (new Date(DETOX_TIME["2.0.0"])).valueOf()
+
+    expect(() => compareNpmModuleDependencies(
+      npmModuleName,
+      invalidPriorTimestamp,
+      invalidLatterTimestamp
+    )).toThrow()
+  })
+
+  test("should return null if something went wrong", () => {
+    const npmModuleName = "a-non-existent-package---what-are-the-odds-there-will-be"
+    const priorTimestamp = (new Date(DETOX_TIME["7.0.0"])).valueOf()
+    const latterTimestamp = (new Date(DETOX_TIME["8.0.0"])).valueOf()
+
+    const result = compareNpmModuleDependencies(
+      npmModuleName,
+        priorTimestamp,
+      latterTimestamp
+    )
+
+    expect(result).toBeNull()
+  })
+
 })
