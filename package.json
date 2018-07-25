@@ -4,13 +4,27 @@
   "main": "index.js",
   "author": "javinor <javinor@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint ./src --fix"
+  },
   "devDependencies": {
+    "eslint": "^5.2.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.2",
     "flow-bin": "^0.77.0",
-    "jest": "^23.4.1"
+    "jest": "^23.4.1",
+    "prettier": "1.13.7"
   },
   "dependencies": {
     "dayjs": "^1.7.4",
     "lodash": "^4.17.10",
     "semver": "^5.5.0"
+  },
+  "eslintConfig": {
+    "extends": ["plugin:prettier/recommended"],
+    "env": { "es6": true }
+  },
+  "prettier": {
+    "semi": false
   }
 }
