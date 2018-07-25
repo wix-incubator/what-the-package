@@ -1,8 +1,10 @@
 const {
   getRegistryInfoField,
   getExactVersion,
-  getExactDependencyVersionsAt
+  getExactDependencyVersionsAt,
+  getVersionsComparison,
 } = require("../src/utils")
+
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 
 const {
@@ -128,6 +130,42 @@ describe("getExactDependencyVersionsAt", () => {
       "babel-preset-react": "6.5.0",
       "babel-preset-stage-0": "6.5.0",
       "babel-register": "6.9.0",
+    })
+  })
+})
+
+describe("getVersionsComparison", () => {
+  test("should be correct", () => {
+    const priorVersions = {
+      "babel-cli": "6.10.1",
+      "babel-core": "6.9.1",
+      "babel-eslint": "6.0.4",
+    };
+    const latterVersions = {
+      "babel-cli": "6.10.1",
+      "babel-core": "7.0.0",
+      "babel-polyfill": "6.9.1",
+    };
+
+    const versionsComparison = getVersionsComparison(priorVersions, latterVersions)
+
+    expect(versionsComparison).toEqual({
+      "babel-cli": {
+         "latterVersion": "6.10.1",
+        "priorVersion": "6.10.1",
+      },
+      "babel-core": {
+         "latterVersion": "7.0.0",
+         "priorVersion": "6.9.1",
+      },
+      "babel-eslint": {
+        "latterVersion": null,
+        "priorVersion": "6.0.4",
+      },
+      "babel-polyfill": {
+        "latterVersion": "6.9.1",
+        "priorVersion": null,
+      },
     })
   })
 })
