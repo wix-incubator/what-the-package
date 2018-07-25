@@ -1,6 +1,6 @@
 // @flow
 const _ = require("lodash")
-const { execSync } = require('child_process') 
+const { execSync } = require("child_process")
 const fs = require("fs")
 const dayjs = require("dayjs")
 const SV = require("semver")
@@ -21,10 +21,10 @@ export type VersionDiff = {
 const getRegistryInfoField = (
   npmModuleName /*: NpmModuleName */,
   fieldName /*: InfoField */
-) /*: {[Version]: DateString} | null */=> {
+) /*: {[Version]: DateString} | null */ => {
   const cmd = `npm view --json ${npmModuleName} ${fieldName}`
   try {
-    const fieldStr = execSync(cmd, {encoding: "utf8"})
+    const fieldStr = execSync(cmd, { encoding: "utf8" })
     const field = JSON.parse(fieldStr)
     return field
   } catch (e) {
@@ -34,14 +34,10 @@ const getRegistryInfoField = (
 
 const getExactVersion = (
   npmModuleName /*: NpmModuleName */,
-  timestamp /*: TimestampMs */, 
+  timestamp /*: TimestampMs */,
   semver /*: Semver */
 ) /*: Version | null */ => {
-
-  const versionToReleaseTime = getRegistryInfoField(
-    npmModuleName,
-    "time"
-  )
+  const versionToReleaseTime = getRegistryInfoField(npmModuleName, "time")
 
   if (versionToReleaseTime === null) {
     return null
@@ -53,35 +49,48 @@ const getExactVersion = (
     const isTagless = v => semverRegex.test(v)
     return isTagless(version) && SV.satisfies(version, semver)
   })
-  const filteredByReleaseDate = filteredBySemver.filter(ver => dayjs(versionToReleaseTime[ver]).isBefore(dayjs(timestamp)))
-  
+  const filteredByReleaseDate = filteredBySemver.filter(ver =>
+    dayjs(versionToReleaseTime[ver]).isBefore(dayjs(timestamp))
+  )
+
   if (_.isEmpty(filteredByReleaseDate)) {
     return null
   } else {
-    const latestVersion = _.maxBy(filteredByReleaseDate, ver => dayjs(versionToReleaseTime[ver]).valueOf())
+    const latestVersion = _.maxBy(filteredByReleaseDate, ver =>
+      dayjs(versionToReleaseTime[ver]).valueOf()
+    )
     return latestVersion
   }
 }
 
 const getExactDependencyVersionsAt = (
   npmModuleName /*: NpmModuleName */,
-  timestamp /*: TimestampMs */,
+  timestamp /*: TimestampMs */
 ) /*: { [NpmModuleName]: Version } | null */ => {
-
-  const version = getExactVersion(npmModuleName, timestamp, 'x')
+  const version = getExactVersion(npmModuleName, timestamp, "x")
   if (version === null) {
     return null
   }
 
-  const dependencySemvers = getRegistryInfoField(`${npmModuleName}@${version}`, 'dependencies')
-  const devDependencySemvers = getRegistryInfoField(`${npmModuleName}@${version}`, 'devDependencies')
+  const dependencySemvers = getRegistryInfoField(
+    `${npmModuleName}@${version}`,
+    "dependencies"
+  )
+  const devDependencySemvers = getRegistryInfoField(
+    `${npmModuleName}@${version}`,
+    "devDependencies"
+  )
 
-  const allDependencySemvers = {
-    ...dependencySemvers,
-    ...devDependencySemvers,
-  }
+  const allDependencySemvers = Object.assign(
+    {},
+    dependencySemvers,
+    devDependencySemvers
+  )
 
-  const exactDependencyVersions = _.mapValues(allDependencySemvers, (semver, npmModuleName) => getExactVersion(npmModuleName, timestamp, semver))
+  const exactDependencyVersions = _.mapValues(
+    allDependencySemvers,
+    (semver, npmModuleName) => getExactVersion(npmModuleName, timestamp, semver)
+  )
 
   return exactDependencyVersions
 }
@@ -89,8 +98,7 @@ const getExactDependencyVersionsAt = (
 const getVersionsComparison = (
   priorVersions /*: { [NpmModuleName]: Version }  */,
   latterVersions /*: { [NpmModuleName]: Version }  */
-)/*: { [NpmModuleName]: VersionDiff } */ => {
-
+) /*: { [NpmModuleName]: VersionDiff } */ => {
   const priorKeys = Object.keys(priorVersions)
   const latterKeys = Object.keys(latterVersions)
   const keys = _.union(priorKeys, latterKeys)
@@ -99,7 +107,7 @@ const getVersionsComparison = (
       moduleName,
       {
         priorVersion: priorVersions[moduleName] || null,
-        latterVersion: latterVersions[moduleName] || null,
+        latterVersion: latterVersions[moduleName] || null
       }
     ]
   })
@@ -108,7 +116,10 @@ const getVersionsComparison = (
 }
 
 const getVersionsDiff = (priorVersions, latterVersions) => {
-  const versionsComparison = getVersionsComparison(priorVersions, latterVersions)
+  const versionsComparison = getVersionsComparison(
+    priorVersions,
+    latterVersions
+  )
   const diff = _.omitBy(versionsComparison, (versionsDiff, packageName) => {
     return versionsDiff.priorVersion === versionsDiff.latterVersion
   })
@@ -120,5 +131,5 @@ module.exports = {
   getExactVersion,
   getExactDependencyVersionsAt,
   getVersionsComparison,
-  getVersionsDiff,
+  getVersionsDiff
 }

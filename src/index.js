@@ -2,7 +2,7 @@
 const _ = require("lodash")
 const {
   getExactDependencyVersionsAt,
-  getVersionsComparison,
+  getVersionsComparison
 } = require("./utils")
 
 /*::
@@ -18,24 +18,25 @@ import type {
 
 const compareNpmModuleDependencies = (
   npmModuleName /*: NpmModuleName */,
-  priorTimestamp /*: TimestampMs */, 
+  priorTimestamp /*: TimestampMs */,
   latterTimestamp /*: TimestampMs */
 ) /*: { [NpmModuleName]: VersionDiff } */ => {
-
-  if (priorTimestamp >=  latterTimestamp) {
+  if (priorTimestamp >= latterTimestamp) {
     throw new Error(`${priorTimestamp} is not prior to ${latterTimestamp}`)
   }
-  const priorDependencies = getExactDependencyVersionsAt(npmModuleName, priorTimestamp)
-  const latterDependencies = getExactDependencyVersionsAt(npmModuleName, latterTimestamp)
+  const priorDependencies = getExactDependencyVersionsAt(
+    npmModuleName,
+    priorTimestamp
+  )
+  const latterDependencies = getExactDependencyVersionsAt(
+    npmModuleName,
+    latterTimestamp
+  )
 
   const result = getVersionsComparison(priorDependencies, latterDependencies)
   return result
 }
 
-
-
-
-
 module.exports = {
-  compareNpmModuleDependencies,
+  compareNpmModuleDependencies
 }
