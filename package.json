@@ -7,6 +7,9 @@
   "scripts": {
     "lint": "eslint ./src --fix"
   },
+  "bin": {
+    "dep-diff": "./src/cli.js"
+  },
   "devDependencies": {
     "eslint": "^5.2.0",
     "eslint-config-prettier": "^2.9.0",
