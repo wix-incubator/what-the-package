@@ -41,7 +41,19 @@ describe("compareNpmModuleDependencies", () => {
     )).toThrow()
   })
 
-  test("should return null if something went wrong")
+  test("should return null if something went wrong", () => {
+    const npmModuleName = "a-non-existent-package---what-are-the-odds-there-will-be"
+    const priorTimestamp = (new Date(DETOX_TIME["7.0.0"])).valueOf()
+    const latterTimestamp = (new Date(DETOX_TIME["8.0.0"])).valueOf()
+
+    const result = compareNpmModuleDependencies(
+      npmModuleName,
+        priorTimestamp,
+      latterTimestamp
+    )
+
+    expect(result).toBeNull()
+  })
 
 })
 

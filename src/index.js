@@ -20,7 +20,7 @@ const compareNpmModuleDependencies = (
   npmModuleName /*: NpmModuleName */,
   priorTimestamp /*: TimestampMs */,
   latterTimestamp /*: TimestampMs */
-) /*: { [NpmModuleName]: VersionDiff } */ => {
+) /*: null | { [NpmModuleName]: VersionDiff } */ => {
   if (priorTimestamp >= latterTimestamp) {
     throw new Error(`${priorTimestamp} is not prior to ${latterTimestamp}`)
   }
@@ -32,6 +32,10 @@ const compareNpmModuleDependencies = (
     npmModuleName,
     latterTimestamp
   )
+
+  if (priorDependencies === null || latterDependencies === null) {
+    return null
+  }
 
   const result = getVersionsComparison(priorDependencies, latterDependencies)
   return result
