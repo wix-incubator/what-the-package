@@ -32,7 +32,7 @@ const getRegistryInfoField = (
   }
 }
 
-const semverToExactVersion = (
+const getExactVersion = (
   npmModuleName /*: NpmModuleName */,
   timestamp /*: TimestampMs */, 
   semver /*: Semver */
@@ -66,23 +66,29 @@ const semverToExactVersion = (
 const getExactDependencyVersionsAt = (
   npmModuleName /*: NpmModuleName */,
   timestamp /*: TimestampMs */,
-) /*: { [NpmModuleName]: Version } */ => {
+) /*: { [NpmModuleName]: Version | null } */ => {
 
-  const dependencySemvers = getRegistryInfoField(npmModuleName, 'dependencies')
-  const devDependencySemvers = getRegistryInfoField(npmModuleName, 'devDependencies')
+  const version = getExactVersion(npmModuleName, timestamp, 'x')
+  if (version === null) {
+    return null
+  }
+
+  const dependencySemvers = getRegistryInfoField(`${npmModuleName}@${version}`, 'dependencies')
+  console.log({npmModuleWithVersion: `${npmModuleName}@${version}`, dependencySemvers})
+  const devDependencySemvers = getRegistryInfoField(`${npmModuleName}@${version}`, 'devDependencies')
 
   const allDependencySemvers = {
     ...dependencySemvers,
     ...devDependencySemvers,
   }
 
-  const exactDependencyVersions = _.mapValues(allDependencySemvers, (semver, npmModuleName) => semverToExactVersion(npmModuleName, timestamp, semver))
+  const exactDependencyVersions = _.mapValues(allDependencySemvers, (semver, npmModuleName) => getExactVersion(npmModuleName, timestamp, semver))
 
   return exactDependencyVersions
 }
 
 module.exports = {
   getRegistryInfoField,
-  semverToExactVersion,
+  getExactVersion,
   getExactDependencyVersionsAt,
 }

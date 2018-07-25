@@ -1,6 +1,6 @@
 const {
   getRegistryInfoField,
-  semverToExactVersion,
+  getExactVersion,
   getExactDependencyVersionsAt
 } = require("../src/utils")
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
@@ -57,13 +57,13 @@ describe("getRegistryInfoField", () => {
   })
 })
 
-describe("semverToExactVersion", () => {
+describe("getExactVersion", () => {
   test("should return the latest version", () => {
     const npmModuleName = DETOX_NAME
     const semver = "x"
     const timestamp = (new Date(DETOX_TIME["7.0.1"])).valueOf() + 1
 
-    const version = semverToExactVersion(npmModuleName, timestamp, semver)
+    const version = getExactVersion(npmModuleName, timestamp, semver)
     expect(version).toEqual("7.0.1")
   })
 
@@ -72,7 +72,7 @@ describe("semverToExactVersion", () => {
     const semver = "7.0.x"
     const timestamp = (new Date(DETOX_TIME["7.3.0"])).valueOf() + 1
 
-    const version = semverToExactVersion(npmModuleName, timestamp, semver)
+    const version = getExactVersion(npmModuleName, timestamp, semver)
     expect(version).toEqual("7.0.1")
   })
   
@@ -81,7 +81,7 @@ describe("semverToExactVersion", () => {
     const semver = "x"
     const timestamp = (new Date(DETOX_TIME["7.0.0-alpha.1"])).valueOf() + 1
 
-    const version = semverToExactVersion(npmModuleName, timestamp, semver)
+    const version = getExactVersion(npmModuleName, timestamp, semver)
     expect(version).toEqual("6.0.4")
   })
 
@@ -90,7 +90,7 @@ describe("semverToExactVersion", () => {
     const semver = "6.3.x"
     const timestamp = (new Date(DETOX_TIME["7.0.0"])).valueOf() + 1
 
-    const version = semverToExactVersion(npmModuleName, timestamp, semver)
+    const version = getExactVersion(npmModuleName, timestamp, semver)
     expect(version).toEqual(null)
   })
 
@@ -99,7 +99,7 @@ describe("semverToExactVersion", () => {
     const semver = "x"
     const timestamp = (new Date(DETOX_TIME["created"])).valueOf() - 1
 
-    const version = semverToExactVersion(npmModuleName, timestamp, semver)
+    const version = getExactVersion(npmModuleName, timestamp, semver)
     expect(version).toEqual(null)
   })
 
@@ -108,14 +108,14 @@ describe("semverToExactVersion", () => {
     const semver = "x"
     const timestamp = (new Date(DETOX_TIME["7.0.0"])).valueOf() + 1
 
-    const version = semverToExactVersion(npmModuleName, timestamp, semver)
+    const version = getExactVersion(npmModuleName, timestamp, semver)
     expect(version).toEqual(null)
   })
 })
 
 describe("getExactDependencyVersionsAt", () => {
   test("should return correct result", () => {
-    const npmModuleName = `${DETOX_NAME}@2.0.0`
+    const npmModuleName = `${DETOX_NAME}`
     const timestamp = (new Date(DETOX_TIME["2.0.0"])).valueOf() + 1
 
     const result = getExactDependencyVersionsAt(npmModuleName, timestamp)
