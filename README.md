@@ -24,7 +24,11 @@ Given a `package.json` and a `targetDate`:
   * on the date of `2018-06-29` will install version 1.13.7
 
 
-
-
-
-
+### Remaining features
+* for unpublished packages: get package.json for dependency list
+* performance improvements: parallelisation
+* run mode --diff for showing only what changed
+* --major, --minor, --patch added with --diff to show only major, minor, patch
+* pretty output
+* render "No changes found" when there are no changes
+* when build fails in npm-ci-scripts, if user opted in with --dep-diff fetch last successful build timestamp from CI
