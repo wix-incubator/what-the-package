@@ -137,6 +137,42 @@ describe("getExactDependencyVersionsAt", () => {
 describe("getVersionsComparison", () => {
   test("should be correct", () => {
     const priorVersions = {
+      "package-A": "5",
+      "package-B": "5",
+      "package-C": "5",
+    };
+    const latterVersions = {
+      "package-B": "5",
+      "package-C": "17",
+      "package-D": "6",
+    };
+
+    const versionsComparison = getVersionsComparison(priorVersions, latterVersions)
+
+    expect(versionsComparison).toEqual({
+      "package-A": {
+        "priorVersion": "5",
+        "latterVersion": null,
+      },
+      "package-B": {
+        "priorVersion": "5",
+        "latterVersion": "5",
+      },
+      "package-C": {
+        "priorVersion": "5",
+        "latterVersion": "17",
+      },
+      "package-D": {
+        "priorVersion": null,
+        "latterVersion": "6",
+      },
+    })
+  })
+})
+
+describe.skip("getVersionsDiff", () => {
+  test("should return only versions that changed", () => {
+    const priorVersions = {
       "babel-cli": "6.10.1",
       "babel-core": "6.9.1",
       "babel-eslint": "6.0.4",
