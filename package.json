@@ -24,6 +24,10 @@
     "semver": "^5.5.0"
   },
   "eslintConfig": {
+    "env": {
+      "jest": true,
+      "node": true
+    },
     "extends": [
       "plugin:prettier/recommended"
     ],
