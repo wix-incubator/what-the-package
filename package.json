@@ -27,8 +27,8 @@
     "extends": [
       "plugin:prettier/recommended"
     ],
-    "env": {
-      "es6": true
+    "parserOptions": {
+      "ecmaVersion": 2017
     }
   },
   "eslintIgnore": ["flow-typed"],
