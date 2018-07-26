@@ -60,17 +60,6 @@ const getExactDependencyVersionsAt = async (
     })
 }
 
-const getVersionsDiff = (priorVersions, latterVersions) => {
-  const versionsComparison = compareNameToVersionMaps(
-    priorVersions,
-    latterVersions
-  )
-  const diff = _.omitBy(versionsComparison, versionsDiff => {
-    return versionsDiff.priorVersion === versionsDiff.latterVersion
-  })
-  return diff
-}
-
 const compareNpmModuleDependencies = async (
   npmModuleName /*: NpmModuleName */,
   priorTimestamp /*: TimestampMs */,
@@ -91,6 +80,5 @@ const compareNpmModuleDependencies = async (
 module.exports = {
   compareNpmModuleDependencies,
   getExactDependencyVersionsAt,
-  getExactVersion,
-  getVersionsDiff
+  getExactVersion
 }

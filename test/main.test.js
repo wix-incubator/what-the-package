@@ -5,8 +5,7 @@ jest.setTimeout(30000)
 const {
   compareNpmModuleDependencies,
   getExactDependencyVersionsAt,
-  getExactVersion,
-  getVersionsDiff
+  getExactVersion
 } = require("../src/main")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
@@ -87,38 +86,6 @@ describe("getExactDependencyVersionsAt", () => {
       "babel-preset-react": "6.5.0",
       "babel-preset-stage-0": "6.5.0",
       "babel-register": "6.9.0"
-    })
-  })
-})
-
-describe.skip("getVersionsDiff", () => {
-  test("should return only versions that changed", () => {
-    const priorVersions = {
-      "babel-cli": "6.10.1",
-      "babel-core": "6.9.1",
-      "babel-eslint": "6.0.4"
-    }
-    const latterVersions = {
-      "babel-cli": "6.10.1",
-      "babel-core": "7.0.0",
-      "babel-polyfill": "6.9.1"
-    }
-
-    const diff = getVersionsDiff(priorVersions, latterVersions)
-
-    expect(diff).toEqual({
-      "babel-core": {
-        latterVersion: "7.0.0",
-        priorVersion: "6.9.1"
-      },
-      "babel-eslint": {
-        latterVersion: null,
-        priorVersion: "6.0.4"
-      },
-      "babel-polyfill": {
-        latterVersion: "6.9.1",
-        priorVersion: null
-      }
     })
   })
 })
