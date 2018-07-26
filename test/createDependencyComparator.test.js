@@ -2,20 +2,17 @@
 jest.setTimeout(30000)
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
-const {
-  compareNpmModuleDependencies,
-  getExactDependencyVersionsAt,
-  getExactVersion
-} = require("../src/main")
+const createDependencyComparator = require("../src/createDependencyComparator")
+const dataApi = require("../src/data-api")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
-
 const { name: DETOX_NAME, time: DETOX_TIME } = detoxRegistryInfo
-
 const NON_EXISTING_PACKAGE_NAME =
   "if_this_packages_exists_then_our_build_deserves_to_break_111111oneoneone"
 
 describe("getExactVersion", () => {
+  const { getExactVersion } = createDependencyComparator(dataApi)
+
   test("should return the latest version", () => {
     const npmModuleName = DETOX_NAME
     const semver = "x"
@@ -72,6 +69,8 @@ describe("getExactVersion", () => {
 })
 
 describe("getExactDependencyVersionsAt", () => {
+  const { getExactDependencyVersionsAt } = createDependencyComparator(dataApi)
+
   test("should return correct result", () => {
     const npmModuleName = `${DETOX_NAME}`
     const timestamp = new Date(DETOX_TIME["2.0.0"]).valueOf() + 1
@@ -91,6 +90,8 @@ describe("getExactDependencyVersionsAt", () => {
 })
 
 describe("compareNpmModuleDependencies", () => {
+  const { compareNpmModuleDependencies } = createDependencyComparator(dataApi)
+
   test("should calculate dependecy diff for detox module", () => {
     const npmModuleName = DETOX_NAME
     const priorTimestamp = new Date(DETOX_TIME["7.0.0"]).valueOf() + 1
