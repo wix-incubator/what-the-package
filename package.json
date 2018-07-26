@@ -21,7 +21,8 @@
   "dependencies": {
     "dayjs": "^1.7.4",
     "lodash": "^4.17.10",
-    "semver": "^5.5.0"
+    "semver": "^5.5.0",
+    "yargs": "^12.0.1"
   },
   "eslintConfig": {
     "env": {
@@ -37,7 +38,9 @@
       "ecmaVersion": 2017
     }
   },
-  "eslintIgnore": ["flow-typed"],
+  "eslintIgnore": [
+    "flow-typed"
+  ],
   "prettier": {
     "semi": false
   },
