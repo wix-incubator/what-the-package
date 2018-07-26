@@ -9,7 +9,7 @@ const {
   getRegistryInfoField,
   getVersionsComparison,
   getVersionsDiff
-} = require("../src/utils")
+} = require("../src/main")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 
