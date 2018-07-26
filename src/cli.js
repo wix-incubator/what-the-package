@@ -1,6 +1,9 @@
 #!/usr/bin/env node
+/* eslint no-console: 0 */
 
-const { compareNpmModuleDependencies } = require("./utils")
+const createDependencyComparator = require("../src/createDependencyComparator")
+const dataApi = require("../src/data-api")
+const { compareNpmModuleDependencies } = createDependencyComparator(dataApi)
 
 const [, , ...args] = process.argv
 const [npmModuleName, priorDate, latterDate] = args
