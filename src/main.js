@@ -34,13 +34,10 @@ const getExactDependencyVersionsAt = async (
   npmModuleName /*: NpmModuleName */,
   timestamp /*: TimestampMs */
 ) /*: { [NpmModuleName]: Version } | null */ => {
-  return getExactVersion(npmModuleName, timestamp, "x")
-    .then(version => {
-      return Promise.all([
-        getDependencySemvers(`${npmModuleName}@${version}`),
-        getDevDependencySemvers(`${npmModuleName}@${version}`)
-      ])
-    })
+  return Promise.all([
+    getDependencySemvers(npmModuleName, timestamp),
+    getDevDependencySemvers(npmModuleName, timestamp)
+  ])
     .then(([dependencySemvers, devDependencySemvers]) => {
       return Object.assign({}, dependencySemvers, devDependencySemvers)
     })

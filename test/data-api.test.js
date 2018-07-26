@@ -10,7 +10,7 @@ const {
   dependencies: DETOX_DEPENDENCIES,
   devDependencies: DETOX_DEV_DEPENDENCIES,
   name: DETOX_NAME,
-  time: DETOX_TIME,
+  time: DETOX_VERSION_TO_RELEASE_TIME,
   version: DETOX_VERSION
 } = detoxRegistryInfo
 
@@ -19,33 +19,29 @@ const NON_EXISTING_PACKAGE_NAME =
 
 describe("data-api", () => {
   test("getDependencySemvers should return correct dependencies", async () => {
-    const moduleName = `${DETOX_NAME}@${DETOX_VERSION}`
-    const fieldName = "dependencies"
-    const actual = getDependencySemvers(moduleName, fieldName)
+    const timestamp =
+      new Date(DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION]).valueOf() + 1
+    const actual = getDependencySemvers(DETOX_NAME, timestamp)
 
     return expect(actual).resolves.toEqual(DETOX_DEPENDENCIES)
   })
 
   test("getDevDependencySemvers should return correct devDependencies", () => {
-    const moduleName = `${DETOX_NAME}@${DETOX_VERSION}`
-    const fieldName = "devDependencies"
-    const actual = getDevDependencySemvers(moduleName, fieldName)
+    const timestamp =
+      new Date(DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION]).valueOf() + 1
+    const actual = getDevDependencySemvers(DETOX_NAME, timestamp)
 
     return expect(actual).resolves.toEqual(DETOX_DEV_DEPENDENCIES)
   })
 
-  test("getReleaseTimes should return correct release times", () => {
-    const moduleName = `${DETOX_NAME}@${DETOX_VERSION}`
-    const fieldName = "time"
-    const actual = getReleaseTimes(moduleName, fieldName)
-
-    return expect(actual).resolves.toEqual(DETOX_TIME)
+  test.skip("getReleaseTimes should return correct release times", async () => {
+    // result changes!
+    const actual = getReleaseTimes(DETOX_NAME)
+    return expect(actual).resolves.toEqual(DETOX_VERSION_TO_RELEASE_TIME)
   })
 
   test("should return error message for non-existing package", async () => {
-    const moduleName = NON_EXISTING_PACKAGE_NAME
-    const fieldName = "time"
-    const actual = getReleaseTimes(moduleName, fieldName)
+    const actual = getReleaseTimes(NON_EXISTING_PACKAGE_NAME)
     return expect(actual).rejects.toThrow()
   })
 })

@@ -1,27 +1,37 @@
 const _ = require("lodash")
 const util = require("util")
-const { execSync } = require("child_process")
 const exec = util.promisify(require("child_process").exec)
-const dayjs = require("dayjs")
-const SV = require("semver")
 
-const getRegistryInfoField = async (npmModuleName, fieldName) => {
-  const cmd = `npm view --json ${npmModuleName} ${fieldName}`
-  const { stdout, stderr } = await exec(cmd, { encoding: "utf8" })
+const { resolveVersion } = require("./utils")
 
-  return _.isEmpty(stderr)
-    ? _.isEmpty(stdout)
-      ? {}
-      : JSON.parse(stdout)
-    : JSON.parse(stderr)
+const getVersionToReleaseTime = async npmModuleName => {
+  const cmd = `npm view --json ${npmModuleName} time`
+  const { stderr, stdout } = await exec(cmd, { encoding: "utf8" })
+
+  if (!_.isEmpty(stderr)) {
+    return JSON.parse(stderr)
+  } else {
+    return _.isEmpty(stdout) ? {} : JSON.parse(stdout)
+  }
 }
 
-const getDependencySemvers = npmModuleName =>
-  getRegistryInfoField(npmModuleName, "dependencies")
-const getDevDependencySemvers = npmModuleName =>
-  getRegistryInfoField(npmModuleName, "devDependencies")
-const getReleaseTimes = npmModuleName =>
-  getRegistryInfoField(npmModuleName, "time")
+const getRegistryInfoField = fieldName => async (npmModuleName, timestamp) => {
+  const versionToReleaseTime = await getVersionToReleaseTime(npmModuleName)
+  const version = resolveVersion(versionToReleaseTime, timestamp, "x")
+
+  const cmd = `npm view --json ${npmModuleName}@${version} ${fieldName}`
+  const { stderr, stdout } = await exec(cmd, { encoding: "utf8" })
+
+  if (!_.isEmpty(stderr)) {
+    return JSON.parse(stderr)
+  } else {
+    return _.isEmpty(stdout) ? {} : JSON.parse(stdout)
+  }
+}
+
+const getDependencySemvers = getRegistryInfoField("dependencies")
+const getDevDependencySemvers = getRegistryInfoField("devDependencies")
+const getReleaseTimes = getVersionToReleaseTime
 
 module.exports = {
   getDependencySemvers,
