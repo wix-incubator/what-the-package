@@ -29,36 +29,28 @@ Other???: 0
 Use the '--raw' flag to get a raw json
 ```
 
-
-### known issues
-
-* we ignore release tags, only semver
-
 ### High level flow
 
-Given a `package.json` and a `targetDate`:
+use input time to query npm registry for release and generate the exact dependencies. For the example:
 
-1. get dependencies from `package.json`
-1. for each dep, get output of `npm view`
-1. for each output of `npm view`, return the latest release which conforms to:
-  * `package.json`'s version rule
-  * release date is before `targetDate`
-  * error if result is empty
+```
+$ ./src/cli.js yoshi 2018-06-01 2018-06-10
+```
 
-
-###  Prettier example
-
-* running `npm view prettier` gave an output saved in `data/`
-* Assuming a package json with `prettier` version `^1.13.6` or laxer, you can see that when running `npm i`:
-  * on the date of `2018-06-26` will install version 1.13.6
-  * on the date of `2018-06-29` will install version 1.13.7
+* Get release times of `yoshi`
+* For each given time:
+    * Get the dependencies (prod + dev) at that time
+    * resolve the dependency version
+    * perform comparison
 
 
-### Remaining features
-* for unpublished packages: get package.json for dependency list
+### TODOs
+* publish as npm package
+* move to incubator / wix organization
+* write additional data apis (from local git repos? something else?)
 * performance improvements: parallelisation
-* run mode --diff for showing only what changed
-* --major, --minor, --patch added with --diff to show only major, minor, patch
-* pretty output
-* render "No changes found" when there are no changes
-* when build fails in npm-ci-scripts, if user opted in with --dep-diff fetch last successful build timestamp from CI
+* allow dump of partial json? only major/minor/patch changes, etc.
+* integration with build systems
+* local cache of npm registry
+* visualization?
+* recursion for N level dependencies
