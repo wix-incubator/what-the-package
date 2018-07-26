@@ -48,7 +48,6 @@ $ ./src/cli.js yoshi 2018-06-01 2018-06-10
 * publish as npm package
 * move to incubator / wix organization
 * write additional data apis (from local git repos? something else?)
-* performance improvements: parallelisation
 * allow dump of partial json? only major/minor/patch changes, etc.
 * integration with build systems
 * local cache of npm registry
