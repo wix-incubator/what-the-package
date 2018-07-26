@@ -6,20 +6,12 @@ const {
   compareNpmModuleDependencies,
   getExactDependencyVersionsAt,
   getExactVersion,
-  getRegistryInfoField,
-  getVersionsComparison,
   getVersionsDiff
 } = require("../src/main")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 
-const {
-  dependencies: DETOX_DEPENDENCIES,
-  devDependencies: DETOX_DEV_DEPENDENCIES,
-  name: DETOX_NAME,
-  time: DETOX_TIME,
-  version: DETOX_VERSION
-} = detoxRegistryInfo
+const { name: DETOX_NAME, time: DETOX_TIME } = detoxRegistryInfo
 
 const NON_EXISTING_PACKAGE_NAME =
   "if_this_packages_exists_then_our_build_deserves_to_break_111111oneoneone"
@@ -95,45 +87,6 @@ describe("getExactDependencyVersionsAt", () => {
       "babel-preset-react": "6.5.0",
       "babel-preset-stage-0": "6.5.0",
       "babel-register": "6.9.0"
-    })
-  })
-})
-
-describe("getVersionsComparison", () => {
-  test("should be correct", () => {
-    const priorVersions = {
-      "package-A": "5",
-      "package-B": "5",
-      "package-C": "5"
-    }
-    const latterVersions = {
-      "package-B": "5",
-      "package-C": "17",
-      "package-D": "6"
-    }
-
-    const versionsComparison = getVersionsComparison(
-      priorVersions,
-      latterVersions
-    )
-
-    expect(versionsComparison).toEqual({
-      "package-A": {
-        priorVersion: "5",
-        latterVersion: null
-      },
-      "package-B": {
-        priorVersion: "5",
-        latterVersion: "5"
-      },
-      "package-C": {
-        priorVersion: "5",
-        latterVersion: "17"
-      },
-      "package-D": {
-        priorVersion: null,
-        latterVersion: "6"
-      }
     })
   })
 })
