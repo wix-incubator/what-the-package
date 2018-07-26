@@ -29,7 +29,8 @@
       "node": true
     },
     "extends": [
-      "plugin:prettier/recommended"
+      "plugin:prettier/recommended",
+      "eslint:recommended"
     ],
     "parserOptions": {
       "ecmaVersion": 2017
