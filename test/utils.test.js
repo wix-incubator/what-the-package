@@ -1,3 +1,7 @@
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+jest.setTimeout(30000)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
 const {
   compareNpmModuleDependencies,
   getExactDependencyVersionsAt,
@@ -20,49 +24,6 @@ const {
 const NON_EXISTING_PACKAGE_NAME =
   "if_this_packages_exists_then_our_build_deserves_to_break_111111oneoneone"
 
-describe("getRegistryInfoField", () => {
-  test("should return correct dependencies", () => {
-    const moduleName = `${DETOX_NAME}@${DETOX_VERSION}`
-    const fieldName = "dependencies"
-    const actual = getRegistryInfoField(moduleName, fieldName)
-
-    expect(actual).toEqual(DETOX_DEPENDENCIES)
-  })
-
-  test("should return correct devDependencies", () => {
-    const moduleName = `${DETOX_NAME}@${DETOX_VERSION}`
-    const fieldName = "devDependencies"
-    const actual = getRegistryInfoField(moduleName, fieldName)
-
-    expect(actual).toEqual(DETOX_DEV_DEPENDENCIES)
-  })
-
-  test("should return correct release times", () => {
-    const moduleName = `${DETOX_NAME}@${DETOX_VERSION}`
-    const fieldName = "time"
-    const actual = getRegistryInfoField(moduleName, fieldName)
-
-    expect(actual).toEqual(DETOX_TIME)
-  })
-
-  test("should return null for non-existing package", () => {
-    const moduleName = NON_EXISTING_PACKAGE_NAME
-    const fieldName = "time"
-    const actual = getRegistryInfoField(moduleName, fieldName)
-
-    expect(actual).toEqual(null)
-  })
-
-  test("should return null for non-existing field", () => {
-    const moduleName = DETOX_NAME
-    const fieldName =
-      "if_this_field_exists_then_our_build_deserves_to_break_111111oneoneone"
-    const actual = getRegistryInfoField(moduleName, fieldName)
-
-    expect(actual).toEqual(null)
-  })
-})
-
 describe("getExactVersion", () => {
   test("should return the latest version", () => {
     const npmModuleName = DETOX_NAME
@@ -70,7 +31,7 @@ describe("getExactVersion", () => {
     const timestamp = new Date(DETOX_TIME["7.0.1"]).valueOf() + 1
 
     const version = getExactVersion(npmModuleName, timestamp, semver)
-    expect(version).toEqual("7.0.1")
+    return expect(version).resolves.toEqual("7.0.1")
   })
 
   test("should return the latest version matching the semver", () => {
@@ -79,7 +40,7 @@ describe("getExactVersion", () => {
     const timestamp = new Date(DETOX_TIME["7.3.0"]).valueOf() + 1
 
     const version = getExactVersion(npmModuleName, timestamp, semver)
-    expect(version).toEqual("7.0.1")
+    return expect(version).resolves.toEqual("7.0.1")
   })
 
   test("should ignore versions with tags", () => {
@@ -88,7 +49,7 @@ describe("getExactVersion", () => {
     const timestamp = new Date(DETOX_TIME["7.0.0-alpha.1"]).valueOf() + 1
 
     const version = getExactVersion(npmModuleName, timestamp, semver)
-    expect(version).toEqual("6.0.4")
+    return expect(version).resolves.toEqual("6.0.4")
   })
 
   test("should return null if no version satisfies semver", () => {
@@ -97,7 +58,7 @@ describe("getExactVersion", () => {
     const timestamp = new Date(DETOX_TIME["7.0.0"]).valueOf() + 1
 
     const version = getExactVersion(npmModuleName, timestamp, semver)
-    expect(version).toEqual(null)
+    return expect(version).resolves.toBeNull()
   })
 
   test("should return null if no version was released before timestamp", () => {
@@ -106,7 +67,7 @@ describe("getExactVersion", () => {
     const timestamp = new Date(DETOX_TIME["created"]).valueOf() - 1
 
     const version = getExactVersion(npmModuleName, timestamp, semver)
-    expect(version).toEqual(null)
+    return expect(version).resolves.toBeNull()
   })
 
   test("should return null if package doesn't exist", () => {
@@ -115,7 +76,7 @@ describe("getExactVersion", () => {
     const timestamp = new Date(DETOX_TIME["7.0.0"]).valueOf() + 1
 
     const version = getExactVersion(npmModuleName, timestamp, semver)
-    expect(version).toEqual(null)
+    return expect(version).rejects.toThrow()
   })
 })
 
@@ -125,7 +86,7 @@ describe("getExactDependencyVersionsAt", () => {
     const timestamp = new Date(DETOX_TIME["2.0.0"]).valueOf() + 1
 
     const result = getExactDependencyVersionsAt(npmModuleName, timestamp)
-    expect(result).toEqual({
+    return expect(result).resolves.toEqual({
       "babel-cli": "6.10.1",
       "babel-core": "6.9.1",
       "babel-eslint": "6.0.4",
@@ -221,7 +182,7 @@ describe("compareNpmModuleDependencies", () => {
       latterTimestamp
     )
 
-    expect(result).toEqual(/*{
+    return expect(result).resolves.toEqual({
       "child-process-promise": {
         latterVersion: "2.2.1",
         priorVersion: "2.2.1"
@@ -254,24 +215,24 @@ describe("compareNpmModuleDependencies", () => {
       "telnet-client": { latterVersion: "0.15.3", priorVersion: "0.15.3" },
       tempfile: { latterVersion: "2.0.0", priorVersion: null },
       ws: { latterVersion: "1.1.5", priorVersion: "1.1.5" }
-    }*/)
+    })
   })
 
-  test("should throw if latter is before prior", () => {
+  test("should reject if latter is before prior", () => {
     const npmModuleName = DETOX_NAME
     const invalidPriorTimestamp = new Date(DETOX_TIME["8.0.0"]).valueOf()
     const invalidLatterTimestamp = new Date(DETOX_TIME["2.0.0"]).valueOf()
 
-    expect(() =>
+    return expect(
       compareNpmModuleDependencies(
         npmModuleName,
         invalidPriorTimestamp,
         invalidLatterTimestamp
       )
-    ).toThrow()
+    ).rejects.toThrow()
   })
 
-  test("should return null if something went wrong", () => {
+  test("should reject if something went wrong", () => {
     const npmModuleName =
       "a-non-existent-package---what-are-the-odds-there-will-be"
     const priorTimestamp = new Date(DETOX_TIME["7.0.0"]).valueOf()
@@ -283,6 +244,6 @@ describe("compareNpmModuleDependencies", () => {
       latterTimestamp
     )
 
-    expect(result).toBeNull()
+    return expect(result).rejects.toThrow()
   })
 })

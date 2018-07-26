@@ -9,11 +9,9 @@ compareNpmModuleDependencies(
   npmModuleName,
   new Date(priorDate).valueOf(),
   new Date(latterDate).valueOf()
-).then((res) => {
-  console.log("great success!!!", {res})
-  JSON.stringify(
-    res,
-    null,
-    2
-  )
-}).catch(err => console.error(err))
+)
+  .then(res => {
+    console.log("great success!!!", { res })
+    JSON.stringify(res, null, 2)
+  })
+  .catch(err => console.error("disgraceful error!", { err }))

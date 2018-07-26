@@ -22,63 +22,64 @@ export type VersionDiff = {
 }
 */
 
-const getExactVersion = async (
+const getExactVersion = (
   npmModuleName /*: NpmModuleName */,
   timestamp /*: TimestampMs */,
   semver /*: Semver */
 ) /*: Version | null */ => {
-  const versionToReleaseTime = await getReleaseTimes(npmModuleName)
+  return getReleaseTimes(npmModuleName).then(versionToReleaseTime => {
+    const versions = Object.keys(versionToReleaseTime)
 
-  if (versionToReleaseTime === null) {
-    return null
-  }
+    const filteredBySemver = versions.filter(version => {
+      const semverRegex = /^\d+\.\d+\.\d+$/
+      const isTagless = v => semverRegex.test(v)
+      return isTagless(version) && SV.satisfies(version, semver)
+    })
 
-  const versions = Object.keys(versionToReleaseTime)
-  const filteredBySemver = versions.filter(version => {
-    const semverRegex = /^\d+\.\d+\.\d+$/
-    const isTagless = v => semverRegex.test(v)
-    return isTagless(version) && SV.satisfies(version, semver)
-  })
-  const filteredByReleaseDate = filteredBySemver.filter(ver =>
-    dayjs(versionToReleaseTime[ver]).isBefore(dayjs(timestamp))
-  )
-
-  if (_.isEmpty(filteredByReleaseDate)) {
-    return null
-  } else {
-    const latestVersion = _.maxBy(filteredByReleaseDate, ver =>
-      dayjs(versionToReleaseTime[ver]).valueOf()
+    const filteredByReleaseDate = filteredBySemver.filter(ver =>
+      dayjs(versionToReleaseTime[ver]).isBefore(dayjs(timestamp))
     )
-    return latestVersion
-  }
+
+    if (_.isEmpty(filteredByReleaseDate)) {
+      return null
+    } else {
+      const latestVersion = _.maxBy(filteredByReleaseDate, ver =>
+        dayjs(versionToReleaseTime[ver]).valueOf()
+      )
+
+      return latestVersion
+    }
+  })
 }
 
 const getExactDependencyVersionsAt = async (
   npmModuleName /*: NpmModuleName */,
   timestamp /*: TimestampMs */
 ) /*: { [NpmModuleName]: Version } | null */ => {
-  const version = await getExactVersion(npmModuleName, timestamp, "x")
-  if (version === null) {
-    return null
-  }
+  return getExactVersion(npmModuleName, timestamp, "x")
+    .then(version => {
+      return Promise.all([
+        getDependencySemvers(`${npmModuleName}@${version}`),
+        getDevDependencySemvers(`${npmModuleName}@${version}`)
+      ])
+    })
+    .then(([dependencySemvers, devDependencySemvers]) => {
+      return Object.assign({}, dependencySemvers, devDependencySemvers)
+    })
+    .then(async allDependencySemvers => {
+      const depSemverPairs = _.toPairs(allDependencySemvers)
 
-  const [dependencySemvers, devDependencySemvers] = await Promise.all[
-    getDependencySemvers(`${npmModuleName}@${version}`),
-    getDevDependencySemvers(`${npmModuleName}@${version}`)
-  ]
+      const depVersionPairs = await Promise.all(
+        depSemverPairs.map(([npmModuleName, semver]) =>
+          Promise.all([
+            npmModuleName,
+            getExactVersion(npmModuleName, timestamp, semver)
+          ])
+        )
+      )
 
-  const allDependencySemvers = Object.assign(
-    {},
-    dependencySemvers,
-    devDependencySemvers
-  )
-
-  const exactDependencyVersions = await Promise.all(_.mapValues(
-    allDependencySemvers,
-    (semver, npmModuleName) => getExactVersion(npmModuleName, timestamp, semver)
-  ))
-
-  return exactDependencyVersions
+      return _.fromPairs(depVersionPairs)
+    })
 }
 
 const getVersionsComparison = (
@@ -120,21 +121,13 @@ const compareNpmModuleDependencies = async (
   if (priorTimestamp >= latterTimestamp) {
     throw new Error(`${priorTimestamp} is not prior to ${latterTimestamp}`)
   }
-  const [priorDependencies, latterDependencies] = await Promise.all([getExactDependencyVersionsAt(
-    npmModuleName,
-    priorTimestamp
-  ),
-  getExactDependencyVersionsAt(
-    npmModuleName,
-    latterTimestamp
-  )])
 
-  if (priorDependencies === null || latterDependencies === null) {
-    return null
-  }
-
-  const result = getVersionsComparison(priorDependencies, latterDependencies)
-  return result
+  return Promise.all([
+    getExactDependencyVersionsAt(npmModuleName, priorTimestamp),
+    getExactDependencyVersionsAt(npmModuleName, latterTimestamp)
+  ]).then(([priorDependencies, latterDependencies]) => {
+    return getVersionsComparison(priorDependencies, latterDependencies)
+  })
 }
 
 module.exports = {
