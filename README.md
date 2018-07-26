@@ -3,9 +3,32 @@
 ### Example
 
 ```bash
-./src/cli.js detox 2017 2018
-./src/cli.js yoshi 2018-06-12 2018-06-14
+$ ./src/cli.js yoshi 2018-06-01 2018-06-10
+
+=== Comparing Dependencies ===
+ * name: yoshi
+ * prior: Thu, 31 May 2018 21:00:00 GMT
+ * latter: Sat, 09 Jun 2018 21:00:00 GMT
+
+=== Summary ===
+
+Total packages: 119
+
+Packages added: 2
+Packages removed: 0
+Packages remaining: 117
+
+Packages changed: 9
+Packages unchanged: 108
+
+Major changed: 0
+Minor changed: 4
+Patch changed: 5
+Other???: 0
+
+Use the '--raw' flag to get a raw json
 ```
+
 
 ### known issues
 
