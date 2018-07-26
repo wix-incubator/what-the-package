@@ -1,5 +1,12 @@
 # What The Dep!?
 
+### Example
+
+```bash
+./src/cli.js detox 2017 2018
+./src/cli.js yoshi 2018-06-12 2018-06-14
+```
+
 ### known issues
 
 * we ignore release tags, only semver
