@@ -3,6 +3,11 @@ const _ = require("lodash")
 const { execSync } = require("child_process")
 const dayjs = require("dayjs")
 const SV = require("semver")
+const {
+  getDependencySemvers,
+  getDevDependencySemvers,
+  getReleaseTimes
+} = require("./data-api")
 
 /*::
 export type InfoField = "dependencies" | "devDependencies" | "time"
@@ -17,81 +22,64 @@ export type VersionDiff = {
 }
 */
 
-const getRegistryInfoField = (
-  npmModuleName /*: NpmModuleName */,
-  fieldName /*: InfoField */
-) /*: {[Version]: DateString} | null */ => {
-  const cmd = `npm view --json ${npmModuleName} ${fieldName}`
-  try {
-    const fieldStr = execSync(cmd, { encoding: "utf8" })
-    const field = JSON.parse(fieldStr)
-    return field
-  } catch (e) {
-    return null
-  }
-}
-
 const getExactVersion = (
   npmModuleName /*: NpmModuleName */,
   timestamp /*: TimestampMs */,
   semver /*: Semver */
 ) /*: Version | null */ => {
-  const versionToReleaseTime = getRegistryInfoField(npmModuleName, "time")
+  return getReleaseTimes(npmModuleName).then(versionToReleaseTime => {
+    const versions = Object.keys(versionToReleaseTime)
 
-  if (versionToReleaseTime === null) {
-    return null
-  }
+    const filteredBySemver = versions.filter(version => {
+      const semverRegex = /^\d+\.\d+\.\d+$/
+      const isTagless = v => semverRegex.test(v)
+      return isTagless(version) && SV.satisfies(version, semver)
+    })
 
-  const versions = Object.keys(versionToReleaseTime)
-  const filteredBySemver = versions.filter(version => {
-    const semverRegex = /^\d+\.\d+\.\d+$/
-    const isTagless = v => semverRegex.test(v)
-    return isTagless(version) && SV.satisfies(version, semver)
-  })
-  const filteredByReleaseDate = filteredBySemver.filter(ver =>
-    dayjs(versionToReleaseTime[ver]).isBefore(dayjs(timestamp))
-  )
-
-  if (_.isEmpty(filteredByReleaseDate)) {
-    return null
-  } else {
-    const latestVersion = _.maxBy(filteredByReleaseDate, ver =>
-      dayjs(versionToReleaseTime[ver]).valueOf()
+    const filteredByReleaseDate = filteredBySemver.filter(ver =>
+      dayjs(versionToReleaseTime[ver]).isBefore(dayjs(timestamp))
     )
-    return latestVersion
-  }
+
+    if (_.isEmpty(filteredByReleaseDate)) {
+      return null
+    } else {
+      const latestVersion = _.maxBy(filteredByReleaseDate, ver =>
+        dayjs(versionToReleaseTime[ver]).valueOf()
+      )
+
+      return latestVersion
+    }
+  })
 }
 
-const getExactDependencyVersionsAt = (
+const getExactDependencyVersionsAt = async (
   npmModuleName /*: NpmModuleName */,
   timestamp /*: TimestampMs */
 ) /*: { [NpmModuleName]: Version } | null */ => {
-  const version = getExactVersion(npmModuleName, timestamp, "x")
-  if (version === null) {
-    return null
-  }
+  return getExactVersion(npmModuleName, timestamp, "x")
+    .then(version => {
+      return Promise.all([
+        getDependencySemvers(`${npmModuleName}@${version}`),
+        getDevDependencySemvers(`${npmModuleName}@${version}`)
+      ])
+    })
+    .then(([dependencySemvers, devDependencySemvers]) => {
+      return Object.assign({}, dependencySemvers, devDependencySemvers)
+    })
+    .then(async allDependencySemvers => {
+      const depSemverPairs = _.toPairs(allDependencySemvers)
 
-  const dependencySemvers = getRegistryInfoField(
-    `${npmModuleName}@${version}`,
-    "dependencies"
-  )
-  const devDependencySemvers = getRegistryInfoField(
-    `${npmModuleName}@${version}`,
-    "devDependencies"
-  )
+      const depVersionPairs = await Promise.all(
+        depSemverPairs.map(([npmModuleName, semver]) =>
+          Promise.all([
+            npmModuleName,
+            getExactVersion(npmModuleName, timestamp, semver)
+          ])
+        )
+      )
 
-  const allDependencySemvers = Object.assign(
-    {},
-    dependencySemvers,
-    devDependencySemvers
-  )
-
-  const exactDependencyVersions = _.mapValues(
-    allDependencySemvers,
-    (semver, npmModuleName) => getExactVersion(npmModuleName, timestamp, semver)
-  )
-
-  return exactDependencyVersions
+      return _.fromPairs(depVersionPairs)
+    })
 }
 
 const getVersionsComparison = (
@@ -125,7 +113,7 @@ const getVersionsDiff = (priorVersions, latterVersions) => {
   return diff
 }
 
-const compareNpmModuleDependencies = (
+const compareNpmModuleDependencies = async (
   npmModuleName /*: NpmModuleName */,
   priorTimestamp /*: TimestampMs */,
   latterTimestamp /*: TimestampMs */
@@ -133,28 +121,19 @@ const compareNpmModuleDependencies = (
   if (priorTimestamp >= latterTimestamp) {
     throw new Error(`${priorTimestamp} is not prior to ${latterTimestamp}`)
   }
-  const priorDependencies = getExactDependencyVersionsAt(
-    npmModuleName,
-    priorTimestamp
-  )
-  const latterDependencies = getExactDependencyVersionsAt(
-    npmModuleName,
-    latterTimestamp
-  )
 
-  if (priorDependencies === null || latterDependencies === null) {
-    return null
-  }
-
-  const result = getVersionsComparison(priorDependencies, latterDependencies)
-  return result
+  return Promise.all([
+    getExactDependencyVersionsAt(npmModuleName, priorTimestamp),
+    getExactDependencyVersionsAt(npmModuleName, latterTimestamp)
+  ]).then(([priorDependencies, latterDependencies]) => {
+    return getVersionsComparison(priorDependencies, latterDependencies)
+  })
 }
 
 module.exports = {
   compareNpmModuleDependencies,
   getExactDependencyVersionsAt,
   getExactVersion,
-  getRegistryInfoField,
   getVersionsComparison,
   getVersionsDiff
 }

@@ -27,12 +27,17 @@
     "extends": [
       "plugin:prettier/recommended"
     ],
-    "env": {
-      "es6": true
+    "parserOptions": {
+      "ecmaVersion": 2017
     }
   },
   "eslintIgnore": ["flow-typed"],
   "prettier": {
     "semi": false
+  },
+  "jest": {
+    "bail": true,
+    "silent": false,
+    "verbose": true
   }
 }
