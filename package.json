@@ -47,6 +47,7 @@
   "jest": {
     "bail": true,
     "silent": false,
-    "verbose": true
+    "verbose": true,
+    "testURL": "http://localhost"
   }
 }
