@@ -1,3 +1,4 @@
+const _ = require("lodash")
 const {
   getDependencySemvers,
   getDevDependencySemvers,
@@ -17,6 +18,10 @@ const {
 const NON_EXISTING_PACKAGE_NAME =
   "if_this_packages_exists_then_our_build_deserves_to_break_111111oneoneone"
 
+const omitModifiedVersion = releaseTimes =>
+  _.pickBy(releaseTimes, (releaseTime, version) => version !== "modified")
+
+
 describe("data-api", () => {
   test("getDependencySemvers should return correct dependencies", async () => {
     const timestamp =
@@ -34,10 +39,20 @@ describe("data-api", () => {
     return expect(actual).resolves.toEqual(DETOX_DEV_DEPENDENCIES)
   })
 
-  test.skip("getReleaseTimes should return correct release times", async () => {
-    // result changes!
-    const actual = getReleaseTimes(DETOX_NAME)
-    return expect(actual).resolves.toEqual(DETOX_VERSION_TO_RELEASE_TIME)
+  test("getReleaseTimes should return correct release times", async () => {
+    const detoxTimeWithoutModified = omitModifiedVersion(
+      DETOX_VERSION_TO_RELEASE_TIME
+    )
+    const detoxLatestReleaseTime = DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION]
+
+    const upToDateReleaseTimes = await getReleaseTimes(DETOX_NAME)
+    const releaseTimesAppearingInMockData = _.pickBy(
+      upToDateReleaseTimes,
+      (releaseTime, version) =>
+        releaseTime <= detoxLatestReleaseTime && version !== "modified"
+    )
+
+    expect(releaseTimesAppearingInMockData).toEqual(detoxTimeWithoutModified)
   })
 
   test("should return error message for non-existing package", async () => {
