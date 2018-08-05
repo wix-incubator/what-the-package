@@ -1,0 +1,13 @@
+{
+  "name": "mock-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Gil Meir <gilme@wix.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "some-package-name-for-mock": "1.0.1"
+  },
+  "dependencies": {
+    "yet-another-package-name-for-mock": "2.0.2"
+  }
+}
