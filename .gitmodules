@@ -1,0 +1,3 @@
+[submodule "data/mock-project"]
+	path = data/mock-project
+	url = git@github.com:wix-private/what-the-dep.git
