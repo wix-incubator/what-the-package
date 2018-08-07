@@ -41,15 +41,15 @@ const getPackageJsonFromGitAt = async (timestamp, gitDir) => {
     )
   }
 
-  const {stdout: neededPackageJson} = await exec(`cd ${gitDir} && echo \`git show ${lastCommitBeforeTimestamp}:./package.json\``)
+  const {stdout: packageJson} = await exec(`cd ${gitDir} && echo \`git show ${lastCommitBeforeTimestamp}:./package.json\``)
 
-  if (!neededPackageJson) {
+  if (!packageJson) {
     throw new Error(
       `Failed finding a package.json file on ${timestamp} in the repo at ${gitDir}`
     )
   }
 
-  return Promise.resolve(JSON.parse(neededPackageJson))
+  return Promise.resolve(JSON.parse(packageJson))
 }
 
 const getRegistryInfoField = fieldName => async (npmModuleName, timestamp) => {
