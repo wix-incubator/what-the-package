@@ -66,48 +66,30 @@ const printSummary = versionComparison => {
 
 require("yargs")
   .usage(
-    "$0 <npmModuleName> <prior> <latter>",
+    "$0 [options]",
     "compare dependency versions between time points",
-    yargs => {
-      yargs.positional("npmModuleName", {
-        describe: "name of an npm module",
-        type: "string"
-      })
-
-      yargs.positional("prior", {
-        describe: "time of comparison start",
-        type: "string"
-      })
-
-      yargs.positional("latter", {
-        describe: "time of comparison end",
-        type: "string"
-      })
-    },
     argv => {
-      const { npmModuleName } = argv
-      const prior = dayjs(argv.prior)
-      const latter = dayjs(argv.latter)
+      const { priorDate, source, raw, latterDate } = argv.argv
 
-      if (argv.raw) {
+      if (raw) {
         compareNpmModuleDependencies(
-          npmModuleName,
-          prior.valueOf(),
-          latter.valueOf()
+          source,
+          priorDate.valueOf(),
+          latterDate.valueOf()
         )
           .then(res => console.log(res))
           .catch(err => console.error(err))
       } else {
         console.log("=== Comparing Dependencies ===")
-        console.log(` * name: ${npmModuleName}`)
-        console.log(` * prior: ${prior}`)
-        console.log(` * latter: ${latter}`)
+        console.log(` * source: ${source}`)
+        console.log(` * prior: ${priorDate}`)
+        console.log(` * latter: ${latterDate}`)
         console.log("")
 
         compareNpmModuleDependencies(
-          npmModuleName,
-          prior.valueOf(),
-          latter.valueOf()
+          source,
+          priorDate.valueOf(),
+          latterDate.valueOf()
         )
           .then(res => {
             printSummary(res)
@@ -117,9 +99,32 @@ require("yargs")
     }
   )
   .options({
+    source: {
+      alias: "s",
+      describe:
+        "Specify source project — local path to git repository or npm package name",
+      demandOption: true,
+      string: true
+    },
+    "prior-date": {
+      alias: "p",
+      describe: "Date of comparison start, usually when build was green",
+      demandOption: true,
+      string: true
+    },
+    "latter-date": {
+      alias: "l",
+      describe: "Date of comparison end, usually when the build is broken",
+      string: true,
+      default: new Date()
+    },
     raw: {
       alias: "r",
-      describe: "generate raw output"
+      describe: "Generate raw JSON output"
     }
   })
+  .demandOption(
+    ["source", "prior-date"],
+    "Please provide both source and path prior-date to work with this tool"
+  )
   .help().argv
