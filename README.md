@@ -3,10 +3,10 @@
 ### Example
 
 ```bash
-$ ./src/cli.js yoshi 2018-06-01 2018-06-10
+$ ./src/cli.js --source yoshi --prior-date 2018-06-01 --latter-date 2018-06-10
 
 === Comparing Dependencies ===
- * name: yoshi
+ * source: yoshi
  * prior: Thu, 31 May 2018 21:00:00 GMT
  * latter: Sat, 09 Jun 2018 21:00:00 GMT
 
