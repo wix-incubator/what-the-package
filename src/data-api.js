@@ -32,14 +32,24 @@ const getPackageJsonFromGitAt = async (timestamp, gitDir) => {
     throw new Error(errors.join(", "))
   }
 
-  const cmd = `cd ${gitDir} && lastCommitBeforeTimestamp=\`git log --format=format:%H --before="${timestamp}" -1\` && echo \`git show \$\{lastCommitBeforeTimestamp\}:./package.json\``
-  const { stdout, stderr } = await exec(cmd, { encoding: "utf8" })
-  if (stderr) {
+  const cmd = `cd ${gitDir} && git log --format=format:%H --before="${timestamp}" -1`
+  const {stdout: lastCommitBeforeTimestamp} = await exec(cmd, {encoding: "utf8"})
+
+  if (!lastCommitBeforeTimestamp) {
+    throw new Error(
+      `There are no commits before ${timestamp}`
+    )
+  }
+
+  const {stdout: neededPackageJson} = await exec(`cd ${gitDir} && echo \`git show ${lastCommitBeforeTimestamp}:./package.json\``)
+
+  if (!neededPackageJson) {
     throw new Error(
       `Failed finding a package.json file on ${timestamp} in the repo at ${gitDir}`
     )
   }
-  return Promise.resolve(JSON.parse(stdout))
+
+  return Promise.resolve(JSON.parse(neededPackageJson))
 }
 
 const getRegistryInfoField = fieldName => async (npmModuleName, timestamp) => {

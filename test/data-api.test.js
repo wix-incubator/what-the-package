@@ -1,5 +1,14 @@
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+jest.setTimeout(30000)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
 const path = require("path")
 const _ = require("lodash")
+const util = require("util")
+const fs = require("fs")
+const exec = util.promisify(require("child_process").exec)
+const rimraf = util.promisify(require("rimraf"))
+
 const {
   getDependencySemvers,
   getDevDependencySemvers,
@@ -9,7 +18,7 @@ const {
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 
-const mockProjectPastPackageJson = require("../data/mock-project-at-2018-08-05_01-30-21-package")
+const mockProjectPastPackageJson = require("../data/mock-package.json")
 
 const {
   dependencies: DETOX_DEPENDENCIES,
@@ -66,24 +75,59 @@ describe("data-api", () => {
 })
 
 describe("getPackageJsonFromGitAt", () => {
+  let tempDir = path.resolve(__dirname, "./.tmp")
+  let testDir = path.resolve(tempDir, "./getPackageJsonFromGitAt")
+
+  const initGitRepo = async (dirPath) => {
+    return exec(`cd ${dirPath} && git init`, {encoding: "utf8"})
+  }
+
+  const gitCommit = async (dirPath) => {
+    return exec(`cd ${dirPath} && git add . && git commit -m 'test-commit'`)
+  }
+
+  const getCurrentUnixTimeWithShift = (shiftInSeconds = 0) => {
+    return Math.floor((new Date().valueOf() / 1000) + shiftInSeconds)
+  }
+
+  beforeEach(async () => {
+    await rimraf(tempDir)
+    await util.promisify(fs.mkdir)(tempDir)
+    await util.promisify(fs.mkdir)(testDir)
+
+    await util.promisify(fs.writeFile)(`${testDir}/package.json`, JSON.stringify(mockProjectPastPackageJson), 'utf8')
+
+    await initGitRepo(testDir)
+    await gitCommit(testDir)
+  })
+
+  afterEach(async () => {
+    await rimraf(tempDir)
+  })
+
   test("should return package.json content", async () => {
-    const mockProjectGitDirPath = path.resolve(__dirname, "../data/mock-project")
-    const timestamp = new Date("Sun Aug 5 01:30:21 2018 +0300").valueOf() + 1
+    const timestamp = getCurrentUnixTimeWithShift(10000000000)
+    const packageJson = await getPackageJsonFromGitAt(timestamp, testDir)
 
-    const pj = await getPackageJsonFromGitAt(timestamp, mockProjectGitDirPath)
-
-    expect(pj).toEqual(mockProjectPastPackageJson)
+    expect(packageJson).toEqual(mockProjectPastPackageJson)
   })
 
-  test.skip("should throw if given gitDir doesn't exist", () => {
-    expect(true).toEqual(false)
+  test("should throw if given gitDir doesn't exist", async () => {
+    const timestamp = getCurrentUnixTimeWithShift()
+
+    await expect(getPackageJsonFromGitAt(timestamp, path.resolve(tempDir, './wrong-directory'))).rejects.toThrow()
   })
 
-  test.skip("should throw if couldn't find package.json in given gitDir", () => {
-    expect(true).toEqual(false)
+  test("should throw if couldn't find package.json in given gitDir", async () => {
+    const timestamp = getCurrentUnixTimeWithShift()
+
+    await util.promisify(fs.unlink)(`${testDir}/package.json`)
+    await expect(getPackageJsonFromGitAt(timestamp, testDir)).rejects.toThrow()
   })
 
-  test.skip("should throw if there are not commits before given timestamp", () => {
-    expect(true).toEqual(false)
+  test("should throw if there are not commits before given timestamp", async () => {
+    const timestamp = getCurrentUnixTimeWithShift(-10000) // some date in past
+
+    await expect(getPackageJsonFromGitAt(timestamp, testDir)).rejects.toThrow()
   })
 })
