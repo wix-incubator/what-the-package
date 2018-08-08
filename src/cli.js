@@ -1,43 +1,84 @@
 #!/usr/bin/env node
 /* eslint no-console: 0 */
 const createDependencyComparator = require("../src/createDependencyComparator")
-const dataApi = require("../src/npmPackageResolver")
-const { compareNpmModuleDependencies } = createDependencyComparator(dataApi)
 const ui = require("./cli/ui")
+const npmService = require("./npmService")
+const fs = require('fs')
+const path = require("path")
+
+const SOURCE_TYPES = {
+  GIT: 'git',
+  NPM: 'npm'
+}
+
+const sourceToResolver = {
+  [SOURCE_TYPES.NPM]: require("../src/npmPackageResolver"),
+  [SOURCE_TYPES.GIT]: require("../src/gitPackageResolver")
+}
+
+const getSourceType = async (source) => {
+  if (fs.existsSync(source)) {
+    return SOURCE_TYPES.GIT
+  } else {
+    await npmService.view({
+      moduleName: source
+    })
+
+    return SOURCE_TYPES.NPM
+  }
+}
 
 require("yargs")
   .usage(
     "$0 [options]",
     "compare dependency versions between time points",
-    argv => {
+    async (argv) => {
+      let resolvingSourceSpinner
       const { priorDate, source, raw, latterDate, noColor } = argv.argv
 
-      if (raw) {
-        compareNpmModuleDependencies(
-          source,
-          priorDate.valueOf(),
-          latterDate.valueOf()
-        )
-          .then(res => console.log(res))
-          .catch(err => console.error(err))
-      } else {
-        ui.printHeader({ source, priorDate, latterDate })
+      try {
+        resolvingSourceSpinner = ui.spinner.start("Resolving source...")
 
-        const spinner = ui.spinner.start()
+        const sourceType = await getSourceType(source)
 
-        compareNpmModuleDependencies(
-          source,
-          priorDate.valueOf(),
-          latterDate.valueOf()
-        )
-          .then(res => {
-            ui.spinner.stop(spinner)
-            ui.printSummary(res, noColor)
+        ui.spinner.success(resolvingSourceSpinner, "Resolving dependency is completed:")
+
+        const {compareNpmModuleDependencies} = createDependencyComparator(sourceToResolver[sourceType])
+
+        if (raw) {
+          compareNpmModuleDependencies(
+            source,
+            priorDate.valueOf(),
+            latterDate.valueOf()
+          )
+            .then(res => console.log(res))
+            .catch(err => console.error(err))
+        } else {
+          ui.printHeader({
+            source: sourceType === SOURCE_TYPES.GIT ? path.resolve(source) : source,
+            priorDate,
+            latterDate
           })
-          .catch(err => {
-            ui.spinner.stop(spinner)
-            console.error("Something went wrong:\n", err)
-          })
+
+          const comparingDependenciesSpinner = ui.spinner.start("Comparing dependencies...")
+
+          compareNpmModuleDependencies(
+            source,
+            priorDate.valueOf(),
+            latterDate.valueOf()
+          )
+            .then(res => {
+              ui.spinner.success(comparingDependenciesSpinner, "Comparing dependencies is completed:")
+              ui.printSummary(res, noColor)
+            })
+            .catch(error => {
+              ui.spinner.fail(comparingDependenciesSpinner, "😢 Something went wrong:")
+              console.error(error)
+            })
+        }
+      } catch (error) {
+        ui.spinner.fail(resolvingSourceSpinner, "😢 Such directory or npm package did not find:")
+        console.error(error)
       }
     }
   )
@@ -46,8 +87,8 @@ require("yargs")
       alias: "s",
       describe:
         "Specify source project — local path to git repository or npm package name",
-      demandOption: true,
-      string: true
+      string: true,
+      default: process.cwd()
     },
     "prior-date": {
       alias: "p",
@@ -71,7 +112,7 @@ require("yargs")
     }
   })
   .demandOption(
-    ["source", "prior-date"],
-    "Please provide both source and path prior-date to work with this tool"
+    ["prior-date"],
+    "Please provide prior-date to work with this tool"
   )
   .help().argv
