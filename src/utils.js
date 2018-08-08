@@ -30,17 +30,13 @@ const compareNameToVersionMaps = (priorVersions, latterVersions) => {
   const priorKeys = Object.keys(priorVersions)
   const latterKeys = Object.keys(latterVersions)
   const keys = _.union(priorKeys, latterKeys)
-  const pairs = keys.map(moduleName => {
-    return [
-      moduleName,
-      {
-        priorVersion: priorVersions[moduleName] || null,
-        latterVersion: latterVersions[moduleName] || null
-      }
-    ]
+  return keys.map(moduleName => {
+    return {
+      packageName: moduleName,
+      priorVersion: priorVersions[moduleName] || null,
+      latterVersion: latterVersions[moduleName] || null
+    }
   })
-
-  return _.fromPairs(pairs)
 }
 
 module.exports = {
