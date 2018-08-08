@@ -30,6 +30,7 @@ const printSummary = (modulesComparisonList, isColorDisabled) => {
     module => module.priorVersion !== module.latterVersion
   )
 
+  console.log("")
   console.log("=== Summary ===")
   console.log("")
   printAddedModules(addedModules, setColor)
@@ -51,11 +52,11 @@ const printHeader = parameters => {
 }
 
 const startSpinner = () => {
-  return ora("Comparing Dependencies...").start()
+  return ora("Comparing dependencies...").start()
 }
 
 const stopSpinner = spinner => {
-  spinner.stop()
+  spinner.succeed("Comparing dependencies is completed")
 }
 
 module.exports = {
