@@ -46,8 +46,6 @@ const printSummary = versionComparison => {
   console.log(`Total packages: ${_.size(versionComparison)}`)
   console.log("")
 
-  _.after('fd', 'fd')
-
   console.log(`Packages added: ${_.size(added)}`)
   console.log(`Packages removed: ${_.size(removed)}`)
   console.log(`Packages remaining: ${_.size(present)}`)
