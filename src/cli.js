@@ -4,7 +4,7 @@ const _ = require("lodash")
 const dayjs = require("dayjs")
 const SV = require("semver")
 const createDependencyComparator = require("../src/createDependencyComparator")
-const dataApi = require("../src/data-api")
+const dataApi = require("../src/npmPackageResolver")
 const { compareNpmModuleDependencies } = createDependencyComparator(dataApi)
 
 const printSummary = versionComparison => {

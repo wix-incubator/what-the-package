@@ -1,19 +1,19 @@
 const _ = require("lodash")
 const { compareNameToVersionMaps, resolveVersion } = require("./utils")
+const npm = require('./npmService')
 
-const createDependencyComparator = dataApi => {
+const createDependencyComparator = packageResolver => {
   const {
     getDependencySemvers,
     getDevDependencySemvers,
-    getReleaseTimes
-  } = dataApi
+  } = packageResolver
 
-  const getExactVersion = (
+  const getExactVersion = async (
     npmModuleName /*: NpmModuleName */,
     timestamp /*: TimestampMs */,
     semver /*: Semver */
   ) /*: Version | null */ => {
-    return getReleaseTimes(npmModuleName).then(versionToReleaseTime =>
+    return npm.getPackageReleases(npmModuleName).then(versionToReleaseTime =>
       resolveVersion(versionToReleaseTime, timestamp, semver)
     )
   }

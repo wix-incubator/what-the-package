@@ -1,23 +1,9 @@
 const path = require("path")
 const fs = require("fs")
-const _ = require("lodash")
 const util = require("util")
 const exec = util.promisify(require("child_process").exec)
 
-const { resolveVersion } = require("./utils")
-
-const getVersionToReleaseTime = async npmModuleName => {
-  const cmd = `npm view --json ${npmModuleName} time`
-  const { stderr, stdout } = await exec(cmd, { encoding: "utf8" })
-
-  if (!_.isEmpty(stderr)) {
-    return JSON.parse(stderr)
-  } else {
-    return _.isEmpty(stdout) ? {} : JSON.parse(stdout)
-  }
-}
-
-const getPackageJsonFromGitAt = async (timestamp, gitDir) => {
+const getPackageJsonFromGitAt = async (gitDir, timestamp) => {
   const gitDirPath = path.resolve(gitDir, ".git")
   const pjPath = path.resolve(gitDir, "package.json")
 
@@ -52,27 +38,14 @@ const getPackageJsonFromGitAt = async (timestamp, gitDir) => {
   return Promise.resolve(JSON.parse(packageJson))
 }
 
-const getRegistryInfoField = fieldName => async (npmModuleName, timestamp) => {
-  const versionToReleaseTime = await getVersionToReleaseTime(npmModuleName)
-  const version = resolveVersion(versionToReleaseTime, timestamp, "x")
-
-  const cmd = `npm view --json ${npmModuleName}@${version} ${fieldName}`
-  const { stderr, stdout } = await exec(cmd, { encoding: "utf8" })
-
-  if (!_.isEmpty(stderr)) {
-    return JSON.parse(stderr)
-  } else {
-    return _.isEmpty(stdout) ? {} : JSON.parse(stdout)
-  }
+const getPackageJsonDependencies = fieldName => async (gitDir, timestamp) => {
+  return (await getPackageJsonFromGitAt(gitDir, timestamp))[fieldName]
 }
 
-const getDependencySemvers = getRegistryInfoField("dependencies")
-const getDevDependencySemvers = getRegistryInfoField("devDependencies")
-const getReleaseTimes = getVersionToReleaseTime
+const getDependencySemvers = getPackageJsonDependencies("dependencies")
+const getDevDependencySemvers = getPackageJsonDependencies("devDependencies")
 
 module.exports = {
   getDependencySemvers,
   getDevDependencySemvers,
-  getReleaseTimes,
-  getPackageJsonFromGitAt
 }

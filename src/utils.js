@@ -43,7 +43,12 @@ const compareNameToVersionMaps = (priorVersions, latterVersions) => {
   return _.fromPairs(pairs)
 }
 
+const getCurrentUnixTimeWithShift = (shiftInSeconds = 0) => {
+  return Math.floor((new Date().valueOf() / 1000) + shiftInSeconds)
+}
+
 module.exports = {
   compareNameToVersionMaps,
-  resolveVersion
+  resolveVersion,
+  getCurrentUnixTimeWithShift
 }

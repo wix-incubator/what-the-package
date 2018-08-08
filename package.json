@@ -5,7 +5,8 @@
   "author": "javinor <javinor@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "test": "jest"
   },
   "bin": {
     "dep-diff": "./src/cli.js"
@@ -48,6 +49,7 @@
   "jest": {
     "bail": true,
     "silent": false,
+    "verbose": true,
     "testURL": "http://localhost"
   }
 }
