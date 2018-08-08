@@ -10,7 +10,7 @@ const { name: DETOX_NAME, time: DETOX_TIME } = detoxRegistryInfo
 
 describe("createDependencyComparator", () => {
   describe("getExactVersion", () => {
-    const {getExactVersion} = createDependencyComparator(dataApi)
+    const { getExactVersion } = createDependencyComparator(dataApi)
 
     test("should return the latest version", () => {
       const npmModuleName = DETOX_NAME
@@ -61,19 +61,22 @@ describe("createDependencyComparator", () => {
       const semver = "x"
       const timestamp = new Date(DETOX_TIME["7.0.0"]).valueOf() + 1
 
-      const version = getExactVersion('_wrong-package~)(!*', timestamp, semver)
+      const version = getExactVersion("_wrong-package~)(!*", timestamp, semver)
       return expect(version).rejects.toThrow()
     })
   })
 
   describe("getExactDependencyVersionsAt", () => {
-    const {getExactDependencyVersionsAt} = createDependencyComparator(dataApi)
+    const { getExactDependencyVersionsAt } = createDependencyComparator(dataApi)
 
     test("should return correct result", async () => {
       const npmModuleName = `${DETOX_NAME}`
       const timestamp = new Date(DETOX_TIME["2.0.0"]).valueOf() + 1
 
-      const result = await getExactDependencyVersionsAt(npmModuleName, timestamp)
+      const result = await getExactDependencyVersionsAt(
+        npmModuleName,
+        timestamp
+      )
 
       return expect(result).toEqual({
         "babel-cli": "6.10.1",
@@ -89,7 +92,7 @@ describe("createDependencyComparator", () => {
   })
 
   describe("compareNpmModuleDependencies", () => {
-    const {compareNpmModuleDependencies} = createDependencyComparator(dataApi)
+    const { compareNpmModuleDependencies } = createDependencyComparator(dataApi)
 
     test("should calculate dependecy diff for detox module", () => {
       const npmModuleName = DETOX_NAME
@@ -102,40 +105,122 @@ describe("createDependencyComparator", () => {
         latterTimestamp
       )
 
-      return expect(result).resolves.toEqual({
-        "child-process-promise": {
+      return expect(result).resolves.toEqual([
+        {
           latterVersion: "2.2.1",
+          packageName: "child-process-promise",
           priorVersion: "2.2.1"
         },
-        commander: {latterVersion: "2.15.1", priorVersion: "2.13.0"},
-        "detox-server": {latterVersion: "7.0.0", priorVersion: "7.0.0"},
-        eslint: {latterVersion: "4.19.1", priorVersion: "4.16.0"},
-        "eslint-config-prettier": {latterVersion: null, priorVersion: "2.5.0"},
-        "eslint-plugin-jest": {latterVersion: null, priorVersion: "20.0.3"},
-        "eslint-plugin-node": {latterVersion: "6.0.1", priorVersion: null},
-        "eslint-plugin-prettier": {latterVersion: null, priorVersion: "2.2.0"},
-        "eslint-plugin-promise": {latterVersion: null, priorVersion: "3.6.0"},
-        "eslint-plugin-react": {latterVersion: null, priorVersion: "7.6.0"},
-        "eslint-plugin-react-native": {
+        {
+          latterVersion: "2.15.1",
+          packageName: "commander",
+          priorVersion: "2.13.0"
+        },
+        {
+          latterVersion: "7.0.0",
+          packageName: "detox-server",
+          priorVersion: "7.0.0"
+        },
+        {
+          latterVersion: "4.0.3",
+          packageName: "fs-extra",
+          priorVersion: "4.0.3"
+        },
+        {
+          latterVersion: "2.1.0",
+          packageName: "get-port",
+          priorVersion: "2.1.0"
+        },
+        { latterVersion: "1.3.5", packageName: "ini", priorVersion: "1.3.5" },
+        {
+          latterVersion: "4.17.10",
+          packageName: "lodash",
+          priorVersion: "4.17.4"
+        },
+        {
+          latterVersion: "4.1.2",
+          packageName: "npmlog",
+          priorVersion: "4.1.2"
+        },
+        {
+          latterVersion: "1.0.10",
+          packageName: "shell-utils",
+          priorVersion: "1.0.9"
+        },
+        { latterVersion: "1.2.3", packageName: "tail", priorVersion: "1.2.3" },
+        {
+          latterVersion: "0.15.3",
+          packageName: "telnet-client",
+          priorVersion: "0.15.3"
+        },
+        { latterVersion: "1.1.5", packageName: "ws", priorVersion: "1.1.5" },
+        {
+          latterVersion: "4.19.1",
+          packageName: "eslint",
+          priorVersion: "4.16.0"
+        },
+        {
           latterVersion: null,
+          packageName: "eslint-config-prettier",
+          priorVersion: "2.5.0"
+        },
+        {
+          latterVersion: null,
+          packageName: "eslint-plugin-jest",
+          priorVersion: "20.0.3"
+        },
+        {
+          latterVersion: null,
+          packageName: "eslint-plugin-prettier",
+          priorVersion: "2.2.0"
+        },
+        {
+          latterVersion: null,
+          packageName: "eslint-plugin-promise",
+          priorVersion: "3.6.0"
+        },
+        {
+          latterVersion: null,
+          packageName: "eslint-plugin-react",
+          priorVersion: "7.6.0"
+        },
+        {
+          latterVersion: null,
+          packageName: "eslint-plugin-react-native",
           priorVersion: "3.2.1"
         },
-        "fs-extra": {latterVersion: "4.0.3", priorVersion: "4.0.3"},
-        "get-port": {latterVersion: "2.1.0", priorVersion: "2.1.0"},
-        ini: {latterVersion: "1.3.5", priorVersion: "1.3.5"},
-        jest: {latterVersion: "22.4.4", priorVersion: "20.0.4"},
-        lodash: {latterVersion: "4.17.10", priorVersion: "4.17.4"},
-        minimist: {latterVersion: "1.2.0", priorVersion: "1.2.0"},
-        mockdate: {latterVersion: "2.0.2", priorVersion: "2.0.2"},
-        npmlog: {latterVersion: "4.1.2", priorVersion: "4.1.2"},
-        prettier: {latterVersion: "1.7.0", priorVersion: "1.7.0"},
-        "proper-lockfile": {latterVersion: "3.0.2", priorVersion: null},
-        "shell-utils": {latterVersion: "1.0.10", priorVersion: "1.0.9"},
-        tail: {latterVersion: "1.2.3", priorVersion: "1.2.3"},
-        "telnet-client": {latterVersion: "0.15.3", priorVersion: "0.15.3"},
-        tempfile: {latterVersion: "2.0.0", priorVersion: null},
-        ws: {latterVersion: "1.1.5", priorVersion: "1.1.5"}
-      })
+        {
+          latterVersion: "22.4.4",
+          packageName: "jest",
+          priorVersion: "20.0.4"
+        },
+        {
+          latterVersion: "1.2.0",
+          packageName: "minimist",
+          priorVersion: "1.2.0"
+        },
+        {
+          latterVersion: "2.0.2",
+          packageName: "mockdate",
+          priorVersion: "2.0.2"
+        },
+        {
+          latterVersion: "1.7.0",
+          packageName: "prettier",
+          priorVersion: "1.7.0"
+        },
+        {
+          latterVersion: "3.0.2",
+          packageName: "proper-lockfile",
+          priorVersion: null
+        },
+        { latterVersion: "2.0.0", packageName: "tempfile", priorVersion: null },
+        {
+          latterVersion: "6.0.1",
+          packageName: "eslint-plugin-node",
+          priorVersion: null
+        }
+      ])
     })
 
     test("should reject if latter is before prior", async () => {

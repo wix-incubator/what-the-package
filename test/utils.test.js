@@ -22,24 +22,28 @@ describe("compareNameToVersionMaps", () => {
       latterVersions
     )
 
-    expect(versionsComparison).toEqual({
-      "package-A": {
+    expect(versionsComparison).toEqual([
+      {
+        packageName: "package-A",
         priorVersion: "5",
         latterVersion: null
       },
-      "package-B": {
+      {
+        packageName: "package-B",
         priorVersion: "5",
         latterVersion: "5"
       },
-      "package-C": {
+      {
+        packageName: "package-C",
         priorVersion: "5",
         latterVersion: "17"
       },
-      "package-D": {
+      {
+        packageName: "package-D",
         priorVersion: null,
         latterVersion: "6"
       }
-    })
+    ])
   })
 })
 
