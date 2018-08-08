@@ -4,12 +4,14 @@ const fs = require("fs")
 const exec = util.promisify(require("child_process").exec)
 const rimraf = util.promisify(require("rimraf"))
 
+const {getCurrentUnixTimeWithShift} = require("../src/utils")
+
 const {
   getDependencySemvers,
   getDevDependencySemvers
-} = require("../src/git-data-service")
+} = require("../src/git-package-resolver")
 
-describe("gitDataService", () => {
+describe("git-package-resolver", () => {
   const tempDir = path.resolve(__dirname, "./.tmp")
   const testDir = path.resolve(tempDir, "./gitDataService")
   const packageJson = {
@@ -29,10 +31,6 @@ describe("gitDataService", () => {
 
   const gitCommit = async (dirPath) => {
     return exec(`cd ${dirPath} && git add . && git commit -m 'test-commit'`)
-  }
-
-  const getCurrentUnixTimeWithShift = (shiftInSeconds = 0) => {
-    return Math.floor((new Date().valueOf() / 1000) + shiftInSeconds)
   }
 
   beforeEach(async () => {

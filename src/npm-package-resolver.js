@@ -7,19 +7,13 @@ getRegistryInfoField = fieldName => async (npmModuleName, timestamp) => {
   const packageReleases = await npm.getPackageReleases(npmModuleName)
   const version = resolveVersion(packageReleases, timestamp, "x")
 
-  console.log('Npm.view=', npm.view);
-
-  const {stderr, stdout} = await npm.view({
+  const dependencies = await npm.view({
     moduleName: npmModuleName,
     version,
     fieldName
   })
 
-  if (!_.isEmpty(stderr)) {
-    return JSON.parse(stderr)
-  } else {
-    return _.isEmpty(stdout) ? {} : JSON.parse(stdout)
-  }
+  return dependencies || {}
 }
 
 const getDependencySemvers = getRegistryInfoField("dependencies")

@@ -2,13 +2,13 @@ const _ = require("lodash")
 const { compareNameToVersionMaps, resolveVersion } = require("./utils")
 const npm = require('./npm-service')
 
-const createDependencyComparator = dataApi => {
+const createDependencyComparator = packageResolver => {
   const {
     getDependencySemvers,
     getDevDependencySemvers,
-  } = dataApi
+  } = packageResolver
 
-  const getExactVersion = (
+  const getExactVersion = async (
     npmModuleName /*: NpmModuleName */,
     timestamp /*: TimestampMs */,
     semver /*: Semver */
@@ -62,27 +62,9 @@ const createDependencyComparator = dataApi => {
     })
   }
 
-  const compareGitDependencies = async (
-    gitDir,
-    priorTimestamp,
-    latterTimestamp
-  ) => {
-    if (priorTimestamp >= latterTimestamp) {
-      throw new Error(`${priorTimestamp} is not prior to ${latterTimestamp}`)
-    }
-
-    return Promise.all([
-      getExactDependencyVersionsAt(npmModuleName, priorTimestamp),
-      getExactDependencyVersionsAt(npmModuleName, latterTimestamp)
-    ]).then(([priorDependencies, latterDependencies]) => {
-      return compareNameToVersionMaps(priorDependencies, latterDependencies)
-    })
-  }
-
   return {
     compareNpmModuleDependencies,
     getExactDependencyVersionsAt,
-    compareGitDependencies,
     getExactVersion
   }
 }

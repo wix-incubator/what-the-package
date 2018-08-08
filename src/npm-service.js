@@ -4,21 +4,21 @@ const exec = util.promisify(require("child_process").exec)
 
 const view = async ({moduleName, version = '', fieldName = ''}) => {
   const cmd = `npm view --json ${moduleName}@${version} ${fieldName}`
-  return exec(cmd, {encoding: "utf8"})
+
+  const {stderr, stdout} = await exec(cmd, {encoding: "utf8"})
+
+  if (!_.isEmpty(stderr)) {
+    throw new Error(stderr)
+  } else {
+    return _.isEmpty(stdout) ? stdout : JSON.parse(stdout)
+  }
 }
 
-const getPackageReleases = async moduleName => {
-  const {stderr, stdout} = await view({
+const getPackageReleases = async (moduleName) => {
+  return view({
     moduleName,
     fieldName: 'time'
   })
-
-  // TODO discuss this check
-  if (!_.isEmpty(stderr)) {
-    return JSON.parse(stderr)
-  } else {
-    return _.isEmpty(stdout) ? {} : JSON.parse(stdout)
-  }
 }
 
 module.exports = {

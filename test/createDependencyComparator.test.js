@@ -3,7 +3,7 @@ jest.setTimeout(30000)
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
 const createDependencyComparator = require("../src/createDependencyComparator")
-const dataApi = require("../src/npm-data-service")
+const dataApi = require("../src/npm-package-resolver")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 const { name: DETOX_NAME, time: DETOX_TIME } = detoxRegistryInfo
@@ -69,12 +69,13 @@ describe("createDependencyComparator", () => {
   describe("getExactDependencyVersionsAt", () => {
     const {getExactDependencyVersionsAt} = createDependencyComparator(dataApi)
 
-    test("should return correct result", () => {
+    test("should return correct result", async () => {
       const npmModuleName = `${DETOX_NAME}`
       const timestamp = new Date(DETOX_TIME["2.0.0"]).valueOf() + 1
 
-      const result = getExactDependencyVersionsAt(npmModuleName, timestamp)
-      return expect(result).resolves.toEqual({
+      const result = await getExactDependencyVersionsAt(npmModuleName, timestamp)
+
+      return expect(result).toEqual({
         "babel-cli": "6.10.1",
         "babel-core": "6.9.1",
         "babel-eslint": "6.0.4",
@@ -137,7 +138,7 @@ describe("createDependencyComparator", () => {
       })
     })
 
-    test("should reject if latter is before prior", () => {
+    test("should reject if latter is before prior", async () => {
       const npmModuleName = DETOX_NAME
       const invalidPriorTimestamp = new Date(DETOX_TIME["8.0.0"]).valueOf()
       const invalidLatterTimestamp = new Date(DETOX_TIME["2.0.0"]).valueOf()
