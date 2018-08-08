@@ -1,12 +1,11 @@
 const _ = require("lodash")
 const { compareNameToVersionMaps, resolveVersion } = require("./utils")
+const npm = require('./npm-service')
 
 const createDependencyComparator = dataApi => {
   const {
     getDependencySemvers,
     getDevDependencySemvers,
-    getReleaseTimes,
-    getPackageJsonDependencies
   } = dataApi
 
   const getExactVersion = (
@@ -14,7 +13,7 @@ const createDependencyComparator = dataApi => {
     timestamp /*: TimestampMs */,
     semver /*: Semver */
   ) /*: Version | null */ => {
-    return getReleaseTimes(npmModuleName).then(versionToReleaseTime =>
+    return npm.getPackageReleases(npmModuleName).then(versionToReleaseTime =>
       resolveVersion(versionToReleaseTime, timestamp, semver)
     )
   }
@@ -23,10 +22,6 @@ const createDependencyComparator = dataApi => {
     npmModuleName /*: NpmModuleName */,
     timestamp /*: TimestampMs */
   ) /*: { [NpmModuleName]: Version } | null */ => {
-    //
-    // console.log(1, await getPackageJsonDependencies(1533548633394, './', 'dependencies'))
-    // console.log(2, await getPackageJsonDependencies(1533548633394, './', 'devDependencies'))
-
     return Promise.all([
       getDependencySemvers(npmModuleName, timestamp),
       getDevDependencySemvers(npmModuleName, timestamp)
