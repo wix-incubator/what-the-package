@@ -30,33 +30,41 @@ const printSummary = (modulesComparisonList, isColorDisabled) => {
     module => module.priorVersion !== module.latterVersion
   )
 
-  console.log("")
-  console.log("=== Summary ===")
-  console.log("")
-  printAddedModules(addedModules, setColor)
-  console.log("")
-  printChangedModules(changedModules, setColor)
-  console.log("")
-  printRemovedModules(removedModules, setColor)
-  console.log("")
+  if (addedModules) {
+    printAddedModules(addedModules, setColor)
+  }
+
+  if (changedModules) {
+    console.log("")
+    printChangedModules(changedModules, setColor)
+  }
+
+  if (removedModules) {
+    console.log("")
+    printRemovedModules(removedModules, setColor)
+  }
+
   console.log("")
   console.log("Use the '--raw' flag to get a raw json")
 }
 
-const printHeader = parameters => {
-  console.log("")
-  console.log(` * source: ${parameters.source}`)
-  console.log(` * prior: ${parameters.priorDate}`)
-  console.log(` * latter: ${parameters.latterDate}`)
+const printHeader = ({source, priorDate, latterDate}) => {
+  console.log(` * source: ${source}`)
+  console.log(` * prior: ${priorDate}`)
+  console.log(` * latter: ${latterDate}`)
   console.log("")
 }
 
-const startSpinner = () => {
-  return ora("Comparing dependencies...").start()
+const startSpinner = (message) => {
+  return ora(message).start()
 }
 
-const stopSpinner = spinner => {
-  spinner.succeed("Comparing dependencies is completed")
+const stopSpinnerSuccessfully = (spinner, message) => {
+  spinner.succeed(message)
+}
+
+const stopSpinnerUnsuccessfully = (spinner, message) => {
+  spinner.fail(message)
 }
 
 module.exports = {
@@ -64,6 +72,7 @@ module.exports = {
   printHeader,
   spinner: {
     start: startSpinner,
-    stop: stopSpinner
+    success: stopSpinnerSuccessfully,
+    fail: stopSpinnerUnsuccessfully
   }
 }
