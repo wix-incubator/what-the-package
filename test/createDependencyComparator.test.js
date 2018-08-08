@@ -3,7 +3,7 @@ jest.setTimeout(30000)
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
 const createDependencyComparator = require("../src/createDependencyComparator")
-const dataApi = require("../src/npm-package-resolver")
+const dataApi = require("../src/npmPackageResolver")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 const { name: DETOX_NAME, time: DETOX_TIME } = detoxRegistryInfo

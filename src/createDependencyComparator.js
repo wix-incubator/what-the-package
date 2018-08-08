@@ -1,6 +1,6 @@
 const _ = require("lodash")
 const { compareNameToVersionMaps, resolveVersion } = require("./utils")
-const npm = require('./npm-service')
+const npm = require('./npmService')
 
 const createDependencyComparator = packageResolver => {
   const {

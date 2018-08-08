@@ -9,9 +9,9 @@ const {getCurrentUnixTimeWithShift} = require("../src/utils")
 const {
   getDependencySemvers,
   getDevDependencySemvers
-} = require("../src/git-package-resolver")
+} = require("../src/gitPackageResolver")
 
-describe("git-package-resolver", () => {
+describe("gitPackageResolver", () => {
   const tempDir = path.resolve(__dirname, "./.tmp")
   const testDir = path.resolve(tempDir, "./gitDataService")
   const packageJson = {

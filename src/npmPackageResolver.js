@@ -1,7 +1,7 @@
 const _ = require("lodash")
 
 const {resolveVersion} = require("./utils")
-const npm = require('./npm-service')
+const npm = require('./npmService')
 
 getRegistryInfoField = fieldName => async (npmModuleName, timestamp) => {
   const packageReleases = await npm.getPackageReleases(npmModuleName)

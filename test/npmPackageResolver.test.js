@@ -5,7 +5,7 @@ jest.setTimeout(30000)
 const {
   getDependencySemvers,
   getDevDependencySemvers
-} = require("../src/npm-package-resolver")
+} = require("../src/npmPackageResolver")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 
@@ -18,7 +18,7 @@ const {
 } = detoxRegistryInfo
 
 
-describe("npm-package-resolver", () => {
+describe("npmPackageResolver", () => {
   test("getDependencySemvers should return correct dependencies", async () => {
     const timestamp =
       new Date(DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION]).valueOf() + 1
