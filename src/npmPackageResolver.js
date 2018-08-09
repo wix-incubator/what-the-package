@@ -1,11 +1,9 @@
-const _ = require("lodash")
+const { resolveVersion } = require("./utils")
+const npm = require("./npmService")
 
-const {resolveVersion} = require("./utils")
-const npm = require('./npmService')
-
-getRegistryInfoField = fieldName => async (npmModuleName, timestamp) => {
+const getRegistryInfoField = fieldName => async (npmModuleName, date) => {
   const packageReleases = await npm.getPackageReleases(npmModuleName)
-  const version = resolveVersion(packageReleases, timestamp, "x")
+  const version = resolveVersion(packageReleases, date, "x")
 
   const dependencies = await npm.view({
     moduleName: npmModuleName,
@@ -21,5 +19,5 @@ const getDevDependencySemvers = getRegistryInfoField("devDependencies")
 
 module.exports = {
   getDependencySemvers,
-  getDevDependencySemvers,
+  getDevDependencySemvers
 }

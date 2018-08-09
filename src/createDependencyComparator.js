@@ -1,30 +1,29 @@
 const _ = require("lodash")
 const { compareNameToVersionMaps, resolveVersion } = require("./utils")
-const npm = require('./npmService')
+const npm = require("./npmService")
 
 const createDependencyComparator = packageResolver => {
-  const {
-    getDependencySemvers,
-    getDevDependencySemvers,
-  } = packageResolver
+  const { getDependencySemvers, getDevDependencySemvers } = packageResolver
 
   const getExactVersion = async (
-    npmModuleName /*: NpmModuleName */,
-    timestamp /*: TimestampMs */,
-    semver /*: Semver */
+    npmModuleName,
+    date,
+    semver
   ) /*: Version | null */ => {
-    return npm.getPackageReleases(npmModuleName).then(versionToReleaseTime =>
-      resolveVersion(versionToReleaseTime, timestamp, semver)
-    )
+    return npm
+      .getPackageReleases(npmModuleName)
+      .then(versionToReleaseTime =>
+        resolveVersion(versionToReleaseTime, date, semver)
+      )
   }
 
   const getExactDependencyVersionsAt = async (
-    npmModuleName /*: NpmModuleName */,
-    timestamp /*: TimestampMs */
+    npmModuleName,
+    date
   ) /*: { [NpmModuleName]: Version } | null */ => {
     return Promise.all([
-      getDependencySemvers(npmModuleName, timestamp),
-      getDevDependencySemvers(npmModuleName, timestamp)
+      getDependencySemvers(npmModuleName, date),
+      getDevDependencySemvers(npmModuleName, date)
     ])
       .then(([dependencySemvers, devDependencySemvers]) => {
         return Object.assign({}, dependencySemvers, devDependencySemvers)
@@ -36,7 +35,7 @@ const createDependencyComparator = packageResolver => {
           depSemverPairs.map(([npmModuleName, semver]) =>
             Promise.all([
               npmModuleName,
-              getExactVersion(npmModuleName, timestamp, semver)
+              getExactVersion(npmModuleName, date, semver)
             ])
           )
         )
@@ -46,17 +45,17 @@ const createDependencyComparator = packageResolver => {
   }
 
   const compareNpmModuleDependencies = async (
-    npmModuleName /*: NpmModuleName */,
-    priorTimestamp /*: TimestampMs */,
-    latterTimestamp /*: TimestampMs */
+    npmModuleName,
+    priorDate,
+    latterDate
   ) /*: null | { [NpmModuleName]: VersionDiff } */ => {
-    if (priorTimestamp >= latterTimestamp) {
-      throw new Error(`${priorTimestamp} is not prior to ${latterTimestamp}`)
+    if (latterDate.isBefore(priorDate)) {
+      throw new Error(`${priorDate} is not prior to ${latterDate}`)
     }
 
     return Promise.all([
-      getExactDependencyVersionsAt(npmModuleName, priorTimestamp),
-      getExactDependencyVersionsAt(npmModuleName, latterTimestamp)
+      getExactDependencyVersionsAt(npmModuleName, priorDate),
+      getExactDependencyVersionsAt(npmModuleName, latterDate)
     ]).then(([priorDependencies, latterDependencies]) => {
       return compareNameToVersionMaps(priorDependencies, latterDependencies)
     })

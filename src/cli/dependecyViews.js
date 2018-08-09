@@ -33,6 +33,7 @@ const printAddedModules = (modules, setColor) => {
       })
     )
   )
+  console.log("")
 }
 
 const printChangedModules = (modules, setColor) => {
@@ -59,6 +60,7 @@ const printChangedModules = (modules, setColor) => {
       )
     )
   )
+  console.log("")
 }
 
 const printRemovedModules = (modules, setColor) => {
@@ -74,6 +76,7 @@ const printRemovedModules = (modules, setColor) => {
       })
     )
   )
+  console.log("")
 }
 
 module.exports = {

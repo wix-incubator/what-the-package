@@ -2,7 +2,7 @@ const _ = require("lodash")
 const dayjs = require("dayjs")
 const SV = require("semver")
 
-const resolveVersion = (versionToReleaseTime, timestamp, semver) => {
+const resolveVersion = (versionToReleaseTime, date, semver) => {
   const versions = Object.keys(versionToReleaseTime)
 
   const filteredBySemver = versions.filter(version => {
@@ -12,17 +12,15 @@ const resolveVersion = (versionToReleaseTime, timestamp, semver) => {
   })
 
   const filteredByReleaseDate = filteredBySemver.filter(ver =>
-    dayjs(versionToReleaseTime[ver]).isBefore(dayjs(timestamp))
+    dayjs(versionToReleaseTime[ver]).isBefore(date)
   )
 
   if (_.isEmpty(filteredByReleaseDate)) {
     return null
   } else {
-    const latestVersion = _.maxBy(filteredByReleaseDate, ver =>
+    return _.maxBy(filteredByReleaseDate, ver =>
       dayjs(versionToReleaseTime[ver]).valueOf()
     )
-
-    return latestVersion
   }
 }
 
@@ -39,12 +37,7 @@ const compareNameToVersionMaps = (priorVersions, latterVersions) => {
   })
 }
 
-const getCurrentUnixTimeWithShift = (shiftInSeconds = 0) => {
-  return Math.floor((new Date().valueOf() / 1000) + shiftInSeconds)
-}
-
 module.exports = {
   compareNameToVersionMaps,
-  resolveVersion,
-  getCurrentUnixTimeWithShift
+  resolveVersion
 }
