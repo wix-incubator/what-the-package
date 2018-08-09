@@ -23,7 +23,7 @@ const getSourceType = async source => {
   } else {
     await npmService.view({
       moduleName: source,
-      fieldName: 'name'
+      fieldName: "name"
     })
 
     return SOURCE_TYPES.NPM
@@ -97,7 +97,7 @@ require("yargs")
           resolvingSourceSpinner,
           "😢 Such directory or npm package did not find:"
         )
-        // console.error(error)
+        console.error(error)
       }
     }
   )

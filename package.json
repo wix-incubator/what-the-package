@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "bin": {
-    "dep-diff": "./src/cli.js"
+    "wtp": "./src/cli.js"
   },
   "devDependencies": {
     "eslint": "^5.2.0",
