@@ -12,10 +12,7 @@
     "release": "wnpm-release --no-shrinkwrap"
   },
   "lint-staged": {
-    "*.{js}": [
-      "npm run lint",
-      "git add"
-    ]
+    "*.js": ["npm run lint --", "git add"]
   },
   "bin": {
     "wtp": "./src/cli.js"
