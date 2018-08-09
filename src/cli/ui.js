@@ -48,14 +48,14 @@ const printSummary = (modulesComparisonList, isColorDisabled) => {
   console.log("Use the '--raw' flag to get a raw json")
 }
 
-const printHeader = ({source, priorDate, latterDate}) => {
+const printHeader = ({ source, priorDate, latterDate }) => {
   console.log(` * source: ${source}`)
   console.log(` * prior: ${priorDate}`)
   console.log(` * latter: ${latterDate}`)
   console.log("")
 }
 
-const startSpinner = (message) => {
+const startSpinner = message => {
   return ora(message).start()
 }
 
