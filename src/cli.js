@@ -21,7 +21,8 @@ const getSourceType = async (source) => {
     return SOURCE_TYPES.GIT
   } else {
     await npmService.view({
-      moduleName: source
+      moduleName: source,
+      fieldName: 'name'
     })
 
     return SOURCE_TYPES.NPM
