@@ -49,10 +49,8 @@ const createDependencyComparator = packageResolver => {
     priorDate,
     latterDate
   ) /*: null | { [NpmModuleName]: VersionDiff } */ => {
-    if (priorDate.unix() >= latterDate.unix()) {
-      throw new Error(
-        `${priorDate.toString()} is not prior to ${latterDate.toString()}`
-      )
+    if (latterDate.isBefore(priorDate)) {
+      throw new Error(`${priorDate} is not prior to ${latterDate}`)
     }
 
     return Promise.all([
