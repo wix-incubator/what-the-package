@@ -39,7 +39,7 @@ const printSummary = (modulesComparisonList, isColorDisabled) => {
 }
 
 const printHeader = ({ source, priorDate, latterDate }) => {
-  const dateFormat = "mm:HH DD-MM-YYYY (ddd) Z"
+  const dateFormat = "HH:mm DD-MM-YYYY (ddd) Z"
 
   console.log(` * source: ${source}`)
   console.log(` * prior: ${priorDate.format(dateFormat)}`)
