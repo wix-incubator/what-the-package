@@ -30,19 +30,9 @@ const printSummary = (modulesComparisonList, isColorDisabled) => {
     module => module.priorVersion !== module.latterVersion
   )
 
-  if (addedModules) {
-    printAddedModules(addedModules, setColor)
-  }
-
-  if (changedModules) {
-    console.log("")
-    printChangedModules(changedModules, setColor)
-  }
-
-  if (removedModules) {
-    console.log("")
-    printRemovedModules(removedModules, setColor)
-  }
+  printAddedModules(addedModules, setColor)
+  printChangedModules(changedModules, setColor)
+  printRemovedModules(removedModules, setColor)
 
   console.log("")
   console.log("Use the '--raw' flag to get a raw json")
