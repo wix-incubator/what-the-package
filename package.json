@@ -7,9 +7,15 @@
   "scripts": {
     "lint": "eslint . --fix",
     "test": "jest",
-    "precommit": "npm run lint",
+    "precommit": "lint-staged",
     "prepush": "npm test",
     "release": "wnpm-release --no-shrinkwrap"
+  },
+  "lint-staged": {
+    "*.{js}": [
+      "npm run lint",
+      "git add"
+    ]
   },
   "bin": {
     "wtp": "./src/cli.js"
@@ -24,6 +30,7 @@
     "flow-bin": "^0.77.0",
     "husky": "^0.14.3",
     "jest": "^23.4.1",
+    "lint-staged": "^7.2.0",
     "prettier": "1.13.7",
     "wnpm-ci": "^6.2.54"
   },
