@@ -3,8 +3,7 @@ const path = require("path")
 const fs = require("fs")
 const exec = util.promisify(require("child_process").exec)
 const rimraf = util.promisify(require("rimraf"))
-
-const {getCurrentUnixTimeWithShift} = require("../src/utils")
+const dayjs = require("dayjs")
 
 const {
   getDependencySemvers,
@@ -15,21 +14,21 @@ describe("gitPackageResolver", () => {
   const tempDir = path.resolve(__dirname, "./.tmp")
   const testDir = path.resolve(tempDir, "./gitDataService")
   const packageJson = {
-    "name": "mock-project",
-    "version": "1.0.0",
-    "devDependencies": {
+    name: "mock-project",
+    version: "1.0.0",
+    devDependencies: {
       "some-package-name-for-mock": "1.0.1"
     },
-    "dependencies": {
+    dependencies: {
       "yet-another-package-name-for-mock": "2.0.2"
     }
   }
 
-  const initGitRepo = async (dirPath) => {
-    return exec(`cd ${dirPath} && git init`, {encoding: "utf8"})
+  const initGitRepo = async dirPath => {
+    return exec(`cd ${dirPath} && git init`, { encoding: "utf8" })
   }
 
-  const gitCommit = async (dirPath) => {
+  const gitCommit = async dirPath => {
     return exec(`cd ${dirPath} && git add . && git commit -m 'test-commit'`)
   }
 
@@ -38,7 +37,11 @@ describe("gitPackageResolver", () => {
     await util.promisify(fs.mkdir)(tempDir)
     await util.promisify(fs.mkdir)(testDir)
 
-    await util.promisify(fs.writeFile)(`${testDir}/package.json`, JSON.stringify(packageJson), 'utf8')
+    await util.promisify(fs.writeFile)(
+      `${testDir}/package.json`,
+      JSON.stringify(packageJson),
+      "utf8"
+    )
 
     await initGitRepo(testDir)
     await gitCommit(testDir)
@@ -49,30 +52,32 @@ describe("gitPackageResolver", () => {
   })
 
   test("should return package.json dependencies content", async () => {
-    const timestamp = getCurrentUnixTimeWithShift(100)
-    const dependencies = await getDependencySemvers(testDir, timestamp)
-    const devDependencies = await getDevDependencySemvers(testDir, timestamp)
+    const date = dayjs().subtract(-100, "second")
+    const dependencies = await getDependencySemvers(testDir, date)
+    const devDependencies = await getDevDependencySemvers(testDir, date)
 
     expect(dependencies).toEqual(packageJson.dependencies)
     expect(devDependencies).toEqual(packageJson.devDependencies)
   })
 
   test("should throw if given gitDir doesn't exist", async () => {
-    const timestamp = getCurrentUnixTimeWithShift()
+    const date = dayjs().subtract(-100, "second")
 
-    await expect(getDependencySemvers(path.resolve(tempDir, './wrong-directory'), timestamp)).rejects.toThrow()
+    await expect(
+      getDependencySemvers(path.resolve(tempDir, "./wrong-directory"), date)
+    ).rejects.toThrow()
   })
 
   test("should throw if couldn't find package.json in given gitDir", async () => {
-    const timestamp = getCurrentUnixTimeWithShift()
+    const date = dayjs().subtract(-100, "second")
 
     await util.promisify(fs.unlink)(`${testDir}/package.json`)
-    await expect(getDependencySemvers(testDir, timestamp)).rejects.toThrow()
+    await expect(getDependencySemvers(testDir, date)).rejects.toThrow()
   })
 
-  test("should throw if there are not commits before given timestamp", async () => {
-    const timestamp = getCurrentUnixTimeWithShift(-10000) // some date in past
+  test("should throw if there are not commits before given date", async () => {
+    const date = dayjs().subtract(10000, "second")
 
-    await expect(getDependencySemvers(testDir, timestamp)).rejects.toThrow()
+    await expect(getDependencySemvers(testDir, date)).rejects.toThrow()
   })
 })

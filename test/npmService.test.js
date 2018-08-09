@@ -1,5 +1,5 @@
 const _ = require("lodash")
-const {getPackageReleases} = require("../src/npmService")
+const { getPackageReleases } = require("../src/npmService")
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 
 const {
@@ -11,9 +11,11 @@ const {
 const omitModifiedVersion = releaseTimes =>
   _.pickBy(releaseTimes, (releaseTime, version) => version !== "modified")
 
-describe('npmService', () => {
+describe("npmService", () => {
   test("getPackageReleases: should return correct release times", async () => {
-    const detoxTimeWithoutModified = omitModifiedVersion(DETOX_VERSION_TO_RELEASE_TIME)
+    const detoxTimeWithoutModified = omitModifiedVersion(
+      DETOX_VERSION_TO_RELEASE_TIME
+    )
     const detoxLatestReleaseTime = DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION]
 
     const upToDateReleaseTimes = await getPackageReleases(DETOX_NAME)
@@ -34,5 +36,3 @@ describe('npmService', () => {
     // TODO
   })
 })
-
-

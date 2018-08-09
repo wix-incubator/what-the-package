@@ -2,6 +2,8 @@
 jest.setTimeout(30000)
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
+const dayjs = require("dayjs")
+
 const {
   getDependencySemvers,
   getDevDependencySemvers
@@ -17,31 +19,33 @@ const {
   version: DETOX_VERSION
 } = detoxRegistryInfo
 
-
 describe("npmPackageResolver", () => {
   test("getDependencySemvers should return correct dependencies", async () => {
-    const timestamp =
-      new Date(DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION]).valueOf() + 1
+    const date = dayjs(
+      DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION].valueOf()
+    ).subtract(-1, "millisecond")
 
-    const actual = getDependencySemvers(DETOX_NAME, timestamp)
+    const actual = getDependencySemvers(DETOX_NAME, date)
 
     return expect(actual).resolves.toEqual(DETOX_DEPENDENCIES)
   })
 
   test("getDevDependencySemvers should return correct devDependencies", () => {
-    const timestamp =
-      new Date(DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION]).valueOf() + 1
+    const date = dayjs(
+      DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION].valueOf()
+    ).subtract(-1, "millisecond")
 
-    const actual = getDevDependencySemvers(DETOX_NAME, timestamp)
+    const actual = getDevDependencySemvers(DETOX_NAME, date)
 
     return expect(actual).resolves.toEqual(DETOX_DEV_DEPENDENCIES)
   })
 
   test("should throw error message for non-existing package", async () => {
-    const timestamp =
-      new Date(DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION]).valueOf() + 1
+    const date = dayjs(
+      DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION].valueOf()
+    ).subtract(-1, "millisecond")
 
-    const actual = getDependencySemvers("_wrong-package~)(!*", timestamp)
+    const actual = getDependencySemvers("_wrong-package~)(!*", date)
 
     await expect(actual).rejects.toThrow()
   })

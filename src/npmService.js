@@ -2,10 +2,10 @@ const _ = require("lodash")
 const util = require("util")
 const exec = util.promisify(require("child_process").exec)
 
-const view = async ({moduleName, version = '', fieldName = ''}) => {
+const view = async ({ moduleName, version = "", fieldName = "" }) => {
   const cmd = `npm view --json ${moduleName}@${version} ${fieldName}`
 
-  const {stderr, stdout} = await exec(cmd, {encoding: "utf8"})
+  const { stderr, stdout } = await exec(cmd, { encoding: "utf8" })
 
   if (!_.isEmpty(stderr)) {
     throw new Error(stderr)
@@ -14,10 +14,10 @@ const view = async ({moduleName, version = '', fieldName = ''}) => {
   }
 }
 
-const getPackageReleases = async (moduleName) => {
+const getPackageReleases = async moduleName => {
   return view({
     moduleName,
-    fieldName: 'time'
+    fieldName: "time"
   })
 }
 
