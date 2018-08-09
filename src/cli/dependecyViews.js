@@ -21,62 +21,67 @@ const getSemVerType = module => {
 }
 
 const printAddedModules = (modules, setColor) => {
-  modules ? console.log("Added") : null
-  console.log(
-    table(
-      _.map(modules, module => {
-        return [
-          setColor(colorsService.colors.green),
-          module.packageName,
-          setColor(colorsService.colors.RESET)
-        ]
-      })
+  if (!_.isEmpty(modules)) {
+    console.log("Added:")
+    console.log(
+      table(
+        _.map(modules, module => {
+          return [
+            setColor(colorsService.colors.green),
+            module.packageName,
+            setColor(colorsService.colors.RESET)
+          ]
+        })
+      )
     )
-  )
-  console.log("")
+  }
 }
 
 const printChangedModules = (modules, setColor) => {
-  modules ? console.log("Changed") : null
-  console.log(
-    table(
-      _.orderBy(
-        _.map(modules, module => {
-          return [
-            setColor(colorsService.colors.yellow),
-            module.packageName,
-            module.priorVersion,
-            setColor(colorsService.colors.RESET),
-            "→",
-            setColor(colorsService.colors.yellow),
-            module.latterVersion,
-            setColor(colorsService.colors.RESET),
-            getSemVerType(module)
-          ]
-        }),
-        item => {
-          return item[8]
-        }
+  if (_.isEmpty(modules)) {
+    console.log("There are not changed packages.")
+  } else {
+    console.log("Changed:")
+    console.log(
+      table(
+        _.orderBy(
+          _.map(modules, module => {
+            return [
+              setColor(colorsService.colors.yellow),
+              module.packageName,
+              module.priorVersion,
+              setColor(colorsService.colors.RESET),
+              "→",
+              setColor(colorsService.colors.yellow),
+              module.latterVersion,
+              setColor(colorsService.colors.RESET),
+              getSemVerType(module)
+            ]
+          }),
+          item => {
+            return item[8]
+          }
+        )
       )
     )
-  )
-  console.log("")
+  }
 }
 
 const printRemovedModules = (modules, setColor) => {
-  modules ? console.log("Removed") : null
-  console.log(
-    table(
-      _.map(modules, module => {
-        return [
-          setColor(colorsService.colors.red),
-          module.packageName,
-          setColor(colorsService.colors.RESET)
-        ]
-      })
+  if (!_.isEmpty(modules)) {
+    console.log("Removed:")
+    console.log(
+      table(
+        _.map(modules, module => {
+          return [
+            setColor(colorsService.colors.red),
+            module.packageName,
+            setColor(colorsService.colors.RESET)
+          ]
+        })
+      )
     )
-  )
-  console.log("")
+  }
 }
 
 module.exports = {
