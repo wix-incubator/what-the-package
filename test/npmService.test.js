@@ -1,3 +1,7 @@
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+jest.setTimeout(30000)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
 const _ = require("lodash")
 const { getPackageReleases } = require("../src/npmService")
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
