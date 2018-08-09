@@ -5,11 +5,7 @@ const npm = require("./npmService")
 const createDependencyComparator = packageResolver => {
   const { getDependencySemvers, getDevDependencySemvers } = packageResolver
 
-  const getExactVersion = async (
-    npmModuleName,
-    date,
-    semver
-  ) /*: Version | null */ => {
+  const getExactVersion = async (npmModuleName, date, semver) => {
     return npm
       .getPackageReleases(npmModuleName)
       .then(versionToReleaseTime =>
@@ -17,10 +13,7 @@ const createDependencyComparator = packageResolver => {
       )
   }
 
-  const getExactDependencyVersionsAt = async (
-    npmModuleName,
-    date
-  ) /*: { [NpmModuleName]: Version } | null */ => {
+  const getExactDependencyVersionsAt = async (npmModuleName, date) => {
     return Promise.all([
       getDependencySemvers(npmModuleName, date),
       getDevDependencySemvers(npmModuleName, date)
@@ -48,7 +41,7 @@ const createDependencyComparator = packageResolver => {
     npmModuleName,
     priorDate,
     latterDate
-  ) /*: null | { [NpmModuleName]: VersionDiff } */ => {
+  ) => {
     if (latterDate.isBefore(priorDate)) {
       throw new Error(`${priorDate} is not prior to ${latterDate}`)
     }
