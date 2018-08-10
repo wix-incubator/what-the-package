@@ -3,7 +3,7 @@
 > Check which dependencies were updated between specific dates
 
 This tool helps understand which npm dependencies were changed from last successful build or after you did `npm install`.
-Respect semver described dependencies and check real latest published versions in NPM.
+Respects semver described dependencies and check real latest published versions in NPM.
 Nice tool for integration with CI builds. Works with published NPM package or git directory which have `package.json` file.
 
 ```
@@ -45,7 +45,7 @@ or you can use [npx](https://github.com/zkat/npx#one-off-invocation-without-loca
   $ wtp -s react --prior-date 2018-01-01T09:30              # Check for some npm package
   $ wtp -p 2018-01-01 -l 2018-04-01                         # Get comparison beetween specific dates
 
-  $ wtp -s react -p 2018-05-01 -l 2018-08-09 --raw  # Get a raw output is JSON format
+  $ wtp -s react -p 2018-05-01 -l 2018-08-09 --raw          # Get a raw output is JSON format
   [ { packageName: 'fbjs',
       priorVersion: '0.8.16',
       latterVersion: '0.8.17' },
