@@ -30,8 +30,8 @@ const getSourceType = async source => {
 }
 
 const checkDependencies = async ({
-  priorDate,
-  source,
+  priorDate = new Date(),
+  source = process.cwd(),
   raw,
   latterDate,
   noColor

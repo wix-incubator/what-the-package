@@ -15,8 +15,7 @@ require("yargs")
       alias: "s",
       describe:
         "Specify source project — local path to git repository or npm package name",
-      string: true,
-      default: process.cwd()
+      string: true
     },
     "prior-date": {
       alias: "p",
@@ -27,8 +26,7 @@ require("yargs")
     "latter-date": {
       alias: "l",
       describe: "Date of comparison end, usually when the build is broken",
-      string: true,
-      default: new Date()
+      string: true
     },
     raw: {
       alias: "r",
