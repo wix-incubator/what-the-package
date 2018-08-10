@@ -1,7 +1,7 @@
 {
   "name": "what-the-package",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./src/main.js",
   "author": "javinor <javinor@gmail.com>",
   "license": "MIT",
   "scripts": {
