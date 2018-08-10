@@ -2,7 +2,7 @@
 jest.setTimeout(30000)
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
-const dayjs = require("dayjs")
+const moment = require("moment")
 
 const {
   getDependencySemvers,
@@ -21,7 +21,7 @@ const {
 
 describe("npmPackageResolver", () => {
   test("getDependencySemvers should return correct dependencies", async () => {
-    const date = dayjs(
+    const date = moment(
       DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION].valueOf()
     ).subtract(-1, "millisecond")
 
@@ -31,7 +31,7 @@ describe("npmPackageResolver", () => {
   })
 
   test("getDevDependencySemvers should return correct devDependencies", () => {
-    const date = dayjs(
+    const date = moment(
       DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION].valueOf()
     ).subtract(-1, "millisecond")
 
@@ -41,7 +41,7 @@ describe("npmPackageResolver", () => {
   })
 
   test("should throw error message for non-existing package", async () => {
-    const date = dayjs(
+    const date = moment(
       DETOX_VERSION_TO_RELEASE_TIME[DETOX_VERSION].valueOf()
     ).subtract(-1, "millisecond")
 

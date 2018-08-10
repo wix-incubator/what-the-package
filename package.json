@@ -12,7 +12,10 @@
     "release": "wnpm-release --no-shrinkwrap"
   },
   "lint-staged": {
-    "*.js": ["npm run lint --", "git add"]
+    "*.js": [
+      "npm run lint --",
+      "git add"
+    ]
   },
   "bin": {
     "wtp": "./src/cli.js"
@@ -32,8 +35,8 @@
     "wnpm-ci": "^6.2.54"
   },
   "dependencies": {
-    "dayjs": "^1.7.4",
     "lodash": "^4.17.10",
+    "moment": "^2.22.2",
     "ora": "^3.0.0",
     "rimraf": "^2.6.2",
     "semver": "^5.5.0",

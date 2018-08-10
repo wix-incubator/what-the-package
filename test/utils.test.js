@@ -1,7 +1,7 @@
 const {
   time: DETOX_VERSION_TO_RELEASE_TIME
 } = require("../data/npm-view-detox-8.json")
-const dayjs = require("dayjs")
+const moment = require("moment")
 
 const { compareNameToVersionMaps, resolveVersion } = require("../src/utils")
 
@@ -51,7 +51,7 @@ describe("compareNameToVersionMaps", () => {
 describe("resolveVersion", () => {
   test("should return the latest version", () => {
     const semver = "x"
-    const date = dayjs(DETOX_VERSION_TO_RELEASE_TIME["7.0.1"]).subtract(
+    const date = moment(DETOX_VERSION_TO_RELEASE_TIME["7.0.1"]).subtract(
       -1,
       "millisecond"
     )
@@ -62,7 +62,7 @@ describe("resolveVersion", () => {
 
   test("should return the latest version matching the semver", () => {
     const semver = "7.0.x"
-    const date = dayjs(DETOX_VERSION_TO_RELEASE_TIME["7.3.0"]).subtract(
+    const date = moment(DETOX_VERSION_TO_RELEASE_TIME["7.3.0"]).subtract(
       -1,
       "millisecond"
     )
@@ -73,7 +73,7 @@ describe("resolveVersion", () => {
 
   test("should ignore versions with tags", () => {
     const semver = "x"
-    const timestamp = dayjs(
+    const timestamp = moment(
       DETOX_VERSION_TO_RELEASE_TIME["7.0.0-alpha.1"]
     ).subtract(-1, "millisecond")
     const version = resolveVersion(
@@ -87,7 +87,7 @@ describe("resolveVersion", () => {
 
   test("should return null if no version satisfies semver", () => {
     const semver = "6.3.x"
-    const date = dayjs(DETOX_VERSION_TO_RELEASE_TIME["7.0.0"]).subtract(
+    const date = moment(DETOX_VERSION_TO_RELEASE_TIME["7.0.0"]).subtract(
       -1,
       "millisecond"
     )
@@ -98,7 +98,7 @@ describe("resolveVersion", () => {
 
   test("should return null if no version was released before date", () => {
     const semver = "x"
-    const date = dayjs(DETOX_VERSION_TO_RELEASE_TIME["created"]).subtract(
+    const date = moment(DETOX_VERSION_TO_RELEASE_TIME["created"]).subtract(
       1,
       "millisecond"
     )

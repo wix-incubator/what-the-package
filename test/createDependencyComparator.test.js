@@ -4,7 +4,7 @@ jest.setTimeout(30000)
 
 const createDependencyComparator = require("../src/createDependencyComparator")
 const dataApi = require("../src/npmPackageResolver")
-const dayjs = require("dayjs")
+const moment = require("moment")
 
 const detoxRegistryInfo = require("../data/npm-view-detox-8.json")
 const { name: DETOX_NAME, time: DETOX_TIME } = detoxRegistryInfo
@@ -16,7 +16,7 @@ describe("createDependencyComparator", () => {
     test("should return the latest version", () => {
       const npmModuleName = DETOX_NAME
       const semver = "x"
-      const date = dayjs(DETOX_TIME["7.0.1"].valueOf()).subtract(
+      const date = moment(DETOX_TIME["7.0.1"].valueOf()).subtract(
         -1,
         "millisecond"
       )
@@ -28,7 +28,7 @@ describe("createDependencyComparator", () => {
     test("should return the latest version matching the semver", () => {
       const npmModuleName = DETOX_NAME
       const semver = "7.0.x"
-      const date = dayjs(DETOX_TIME["7.3.0"].valueOf()).subtract(
+      const date = moment(DETOX_TIME["7.3.0"].valueOf()).subtract(
         -1,
         "millisecond"
       )
@@ -40,7 +40,7 @@ describe("createDependencyComparator", () => {
     test("should ignore versions with tags", () => {
       const npmModuleName = DETOX_NAME
       const semver = "x"
-      const date = dayjs(DETOX_TIME["7.0.0-alpha.1"].valueOf()).subtract(
+      const date = moment(DETOX_TIME["7.0.0-alpha.1"].valueOf()).subtract(
         -1,
         "millisecond"
       )
@@ -52,7 +52,7 @@ describe("createDependencyComparator", () => {
     test("should return null if no version satisfies semver", () => {
       const npmModuleName = DETOX_NAME
       const semver = "6.3.x"
-      const date = dayjs(DETOX_TIME["7.0.0"].valueOf()).subtract(
+      const date = moment(DETOX_TIME["7.0.0"].valueOf()).subtract(
         -1,
         "millisecond"
       )
@@ -64,7 +64,7 @@ describe("createDependencyComparator", () => {
     test("should return null if no version was released before date", () => {
       const npmModuleName = DETOX_NAME
       const semver = "x"
-      const date = dayjs(DETOX_TIME["created"]).subtract(1, "millisecond")
+      const date = moment(DETOX_TIME["created"]).subtract(1, "millisecond")
 
       const version = getExactVersion(npmModuleName, date, semver)
       return expect(version).resolves.toBeNull()
@@ -72,7 +72,7 @@ describe("createDependencyComparator", () => {
 
     test("should return null if package doesn't exist", () => {
       const semver = "x"
-      const date = dayjs(DETOX_TIME["7.0.0"].valueOf()).subtract(
+      const date = moment(DETOX_TIME["7.0.0"].valueOf()).subtract(
         -1,
         "millisecond"
       )
@@ -87,7 +87,7 @@ describe("createDependencyComparator", () => {
 
     test("should return correct result", async () => {
       const npmModuleName = `${DETOX_NAME}`
-      const date = dayjs(DETOX_TIME["2.0.0"].valueOf()).subtract(
+      const date = moment(DETOX_TIME["2.0.0"].valueOf()).subtract(
         -1,
         "millisecond"
       )
@@ -112,11 +112,11 @@ describe("createDependencyComparator", () => {
 
     test("should calculate dependecy diff for detox module", () => {
       const npmModuleName = DETOX_NAME
-      const priorDate = dayjs(DETOX_TIME["7.0.0"].valueOf()).subtract(
+      const priorDate = moment(DETOX_TIME["7.0.0"].valueOf()).subtract(
         -1,
         "millisecond"
       )
-      const latterDate = dayjs(DETOX_TIME["8.0.0"].valueOf()).subtract(
+      const latterDate = moment(DETOX_TIME["8.0.0"].valueOf()).subtract(
         -1,
         "millisecond"
       )
@@ -247,8 +247,8 @@ describe("createDependencyComparator", () => {
 
     test("should reject if latter is before prior", async () => {
       const npmModuleName = DETOX_NAME
-      const invalidPriorDate = dayjs(DETOX_TIME["8.0.0"].valueOf())
-      const invalidLatterDate = dayjs(DETOX_TIME["2.0.0"].valueOf())
+      const invalidPriorDate = moment(DETOX_TIME["8.0.0"].valueOf())
+      const invalidLatterDate = moment(DETOX_TIME["2.0.0"].valueOf())
 
       return expect(
         compareNpmModuleDependencies(
@@ -262,8 +262,8 @@ describe("createDependencyComparator", () => {
     test("should reject if something went wrong", () => {
       const npmModuleName =
         "a-non-existent-package---what-are-the-odds-there-will-be"
-      const priorDate = dayjs(DETOX_TIME["7.0.0"].valueOf())
-      const latterDate = dayjs(DETOX_TIME["8.0.0"].valueOf())
+      const priorDate = moment(DETOX_TIME["7.0.0"].valueOf())
+      const latterDate = moment(DETOX_TIME["8.0.0"].valueOf())
 
       const result = compareNpmModuleDependencies(
         npmModuleName,

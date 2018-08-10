@@ -3,7 +3,7 @@ const path = require("path")
 const fs = require("fs")
 const exec = util.promisify(require("child_process").exec)
 const rimraf = util.promisify(require("rimraf"))
-const dayjs = require("dayjs")
+const moment = require("moment")
 
 const {
   getDependencySemvers,
@@ -52,7 +52,7 @@ describe("gitPackageResolver", () => {
   })
 
   test("should return package.json dependencies content", async () => {
-    const date = dayjs().subtract(-100, "second")
+    const date = moment().subtract(-100, "second")
     const dependencies = await getDependencySemvers(testDir, date)
     const devDependencies = await getDevDependencySemvers(testDir, date)
 
@@ -61,7 +61,7 @@ describe("gitPackageResolver", () => {
   })
 
   test("should throw if given gitDir doesn't exist", async () => {
-    const date = dayjs().subtract(-100, "second")
+    const date = moment().subtract(-100, "second")
 
     await expect(
       getDependencySemvers(path.resolve(tempDir, "./wrong-directory"), date)
@@ -69,14 +69,14 @@ describe("gitPackageResolver", () => {
   })
 
   test("should throw if couldn't find package.json in given gitDir", async () => {
-    const date = dayjs().subtract(-100, "second")
+    const date = moment().subtract(-100, "second")
 
     await util.promisify(fs.unlink)(`${testDir}/package.json`)
     await expect(getDependencySemvers(testDir, date)).rejects.toThrow()
   })
 
   test("should throw if there are not commits before given date", async () => {
-    const date = dayjs().subtract(10000, "second")
+    const date = moment().subtract(10000, "second")
 
     await expect(getDependencySemvers(testDir, date)).rejects.toThrow()
   })

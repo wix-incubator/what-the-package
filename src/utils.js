@@ -1,5 +1,5 @@
 const _ = require("lodash")
-const dayjs = require("dayjs")
+const moment = require("moment")
 const SV = require("semver")
 
 const resolveVersion = (versionToReleaseTime, date, semver) => {
@@ -12,14 +12,14 @@ const resolveVersion = (versionToReleaseTime, date, semver) => {
   })
 
   const filteredByReleaseDate = filteredBySemver.filter(ver =>
-    dayjs(versionToReleaseTime[ver]).isBefore(date)
+    moment(versionToReleaseTime[ver]).isBefore(date)
   )
 
   if (_.isEmpty(filteredByReleaseDate)) {
     return null
   } else {
     return _.maxBy(filteredByReleaseDate, ver =>
-      dayjs(versionToReleaseTime[ver]).valueOf()
+      moment(versionToReleaseTime[ver]).valueOf()
     )
   }
 }

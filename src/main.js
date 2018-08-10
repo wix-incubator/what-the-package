@@ -1,7 +1,7 @@
 /* eslint no-console: 0 */
 const createDependencyComparator = require("../src/createDependencyComparator")
 const ui = require("./cli/ui")
-const dayjs = require("dayjs")
+const moment = require("moment")
 const path = require("path")
 const npmService = require("./npmService")
 const fs = require("fs")
@@ -38,8 +38,8 @@ const checkDependencies = async ({
 }) => {
   let resolvingSourceSpinner
 
-  priorDate = dayjs(priorDate)
-  latterDate = dayjs(latterDate)
+  priorDate = moment(priorDate)
+  latterDate = moment(latterDate)
 
   try {
     if (!raw) {
