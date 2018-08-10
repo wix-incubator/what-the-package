@@ -38,26 +38,29 @@ const checkDependencies = async ({
 }) => {
   let resolvingSourceSpinner
 
+  priorDate = dayjs(priorDate)
+  latterDate = dayjs(latterDate)
+
   try {
-    resolvingSourceSpinner = ui.spinner.start("Resolving source...")
+    if (!raw) {
+      resolvingSourceSpinner = ui.spinner.start("Resolving source...")
+    }
 
     const sourceType = await getSourceType(source)
 
-    ui.spinner.success(
-      resolvingSourceSpinner,
-      "Resolving dependency is completed:"
-    )
+    if (!raw) {
+      ui.spinner.success(
+        resolvingSourceSpinner,
+        "Resolving dependency is completed:"
+      )
+    }
 
     const { compareNpmModuleDependencies } = createDependencyComparator(
       sourceToResolver[sourceType]
     )
 
     if (raw) {
-      compareNpmModuleDependencies(
-        source,
-        priorDate.valueOf(),
-        latterDate.valueOf()
-      )
+      compareNpmModuleDependencies(source, priorDate, latterDate)
         .then(res => console.log(res))
         .catch(err => console.error(err))
     } else {
@@ -71,7 +74,7 @@ const checkDependencies = async ({
         "Comparing dependencies..."
       )
 
-      compareNpmModuleDependencies(source, dayjs(priorDate), dayjs(latterDate))
+      compareNpmModuleDependencies(source, priorDate, latterDate)
         .then(res => {
           ui.spinner.success(
             comparingDependenciesSpinner,
