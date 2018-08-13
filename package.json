@@ -1,6 +1,6 @@
 {
   "name": "what-the-package",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "./src/main.js",
   "author": "javinor <javinor@gmail.com>",
   "license": "MIT",
@@ -8,8 +8,7 @@
     "lint": "eslint . --fix",
     "test": "jest",
     "precommit": "lint-staged",
-    "prepush": "npm test",
-    "release": "wnpm-release --no-shrinkwrap"
+    "prepush": "npm test"
   },
   "lint-staged": {
     "*.js": [
