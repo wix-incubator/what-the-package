@@ -71,7 +71,7 @@ or you can use [npx](https://github.com/zkat/npx#one-off-invocation-without-loca
 | `--raw`                  |                          | Return a raw JSON of comparison.                                                    |
 
 `--prior-date, --latter-date`
-Accepts date in a format which `dayjs` lib [accepts](https://github.com/iamkun/dayjs/blob/master/docs/en/API-reference.md#constructor-dayjsexisting-string--number--date--dayjs). Usually is [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601).
+Accept date in a format which `momentjs` lib [accepts](http://momentjs.com/docs/#/parsing/string/). Usually is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
 
 ### TODOs
   * Allow dump of partial json? only major/minor/patch changes, etc.
