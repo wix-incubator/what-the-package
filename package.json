@@ -21,7 +21,8 @@
     "wtp": "./src/cli.js"
   },
   "publishConfig": {
-    "registry": "https://repo.dev.wixpress.com/artifactory/api/npm/npm-repos"
+    "registry": "https://registry.npmjs.org/",
+    "logLevel": "verbose"
   },
   "devDependencies": {
     "eslint": "^5.2.0",
