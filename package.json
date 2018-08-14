@@ -4,6 +4,7 @@
   "main": "./src/main.js",
   "author": "javinor <javinor@gmail.com>",
   "license": "MIT",
+  "repository": "https://github.com/wix-incubator/what-the-package",
   "scripts": {
     "lint": "eslint . --fix",
     "test": "jest",
