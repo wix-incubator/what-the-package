@@ -1,6 +1,6 @@
 {
   "name": "what-the-package",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "./src/main.js",
   "author": "javinor <javinor@gmail.com>",
   "license": "MIT",
